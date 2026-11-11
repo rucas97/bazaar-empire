@@ -19,11 +19,10 @@
 
     <ImageView
         android:id="@+id/scorePanel"
-        android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_width="340dp"
+        android:layout_height="80dp"
         android:layout_marginTop="24dp"
-        android:layout_marginHorizontal="32dp"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter" 
         android:src="@drawable/panel_score"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,28 +41,45 @@
         app:layout_constraintStart_toStartOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
+    <TextView
+        android:id="@+id/tvTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="00:00"
+        android:textColor="#F4C430"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        app:layout_constraintTop_toBottomOf="@+id/scorePanel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <ImageButton
         android:id="@+id/btnShop"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/btn_shop"
-        app:layout_constraintTop_toBottomOf="@+id/scorePanel"
+        app:layout_constraintTop_toBottomOf="@+id/tvTimer"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/btnAd"
         android:layout_width="140dp"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/btn_ad"
-        app:layout_constraintTop_toBottomOf="@+id/scorePanel"
+        app:layout_constraintTop_toBottomOf="@+id/tvTimer"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
@@ -75,6 +91,17 @@
         app:layout_constraintBottom_toTopOf="@+id/btnTap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivSparkle"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/coin"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/itemImage"
+        app:layout_constraintEnd_toEndOf="@+id/itemImage"
+        app:layout_constraintStart_toStartOf="@+id/itemImage"
+        app:layout_constraintTop_toTopOf="@+id/itemImage" />
 
     <ImageButton
         android:id="@+id/btnTap"
@@ -90,11 +117,11 @@
 
     <ImageButton
         android:id="@+id/btnUpgrade"
-        android:layout_width="280dp"
-        android:layout_height="70dp"
-        android:layout_marginBottom="32dp"
+        android:layout_width="320dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="24dp"
         android:background="@android:color/transparent"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:src="@drawable/btn_upgrade"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -112,5 +139,29 @@
         app:layout_constraintBottom_toBottomOf="@+id/btnUpgrade"
         app:layout_constraintStart_toStartOf="@+id/btnUpgrade"
         app:layout_constraintEnd_toEndOf="@+id/btnUpgrade" />
+
+    <!-- The Golden Deal (Good Coin) -->
+    <ImageButton
+        android:id="@+id/btnGoldenDeal"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/coin"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- NEW: The Bad Coin (Cursed Coin) -->
+    <ImageButton
+        android:id="@+id/btnBadCoin"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/coin_bad"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
