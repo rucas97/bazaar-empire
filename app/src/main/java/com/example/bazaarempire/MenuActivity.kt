@@ -2,7 +2,11 @@ package com.example.bazaarempire
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.TextView
@@ -21,28 +25,28 @@ class MenuActivity : AppCompatActivity() {
             tvBestTime.text = String.format("Best Time: %02d:%02d", bestTime / 60, bestTime % 60)
         }
 
-        // Play Button
         findViewById<ImageButton>(R.id.btnPlay).setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
 
-        // Tutorial Button
         findViewById<ImageButton>(R.id.btnTutorial).setOnClickListener {
-            showTutorial()
+            showCustomDialog("آموزش (Tutorial)", 
+                "۱. روی دکمه ضربه بزنید تا سکه بگیرید.\n" +
+                "۲. مراقب سکه‌های بنفش باشید!\n" +
+                "۳. سریع به فرش برسید!", "Got it", null, false)
         }
 
-        // Leaderboard Button
         findViewById<ImageButton>(R.id.btnLeaderboard).setOnClickListener {
-            showLeaderboard(bestTime)
+            val mockScores = "1. Ali - 00:42\n2. Reza - 00:51\n3. Sara - 01:05"
+            val userScore = if (bestTime != 9999) String.format("%02d:%02d", bestTime / 60, bestTime % 60) else "--:--"
+            showCustomDialog("نفرات برتر (Ranks)", "Top Merchants:\n\n$mockScores\n\nYour Best: $userScore", "Close", null, false)
         }
 
-        // Shop Button
         findViewById<ImageButton>(R.id.btnShop).setOnClickListener {
-            showShop()
+            showCustomDialog("فروشگاه (Shop)", "Avatars & Cosmetics coming soon!", "Close", null, false)
         }
 
-        // Settings Button
         findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
             showSettingsDialog()
         }
@@ -50,56 +54,72 @@ class MenuActivity : AppCompatActivity() {
 
     private fun showSettingsDialog() {
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_message, null)
         
-        // Inflate our custom layout
-        val dialogView = layoutInflater.inflate(R.layout.dialog_settings, null)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val tvMessage = dialogView.findViewById<TextView>(R.id.tvDialogMessage)
+        val layoutSettings = dialogView.findViewById<android.widget.LinearLayout>(R.id.layoutSettings)
         val cbMusic = dialogView.findViewById<CheckBox>(R.id.cbMusic)
         val cbSound = dialogView.findViewById<CheckBox>(R.id.cbSound)
+        val btnPositive = dialogView.findViewById<Button>(R.id.btnPositive)
+        val btnNegative = dialogView.findViewById<Button>(R.id.btnNegative)
 
-        // Load current settings (default to true)
+        tvTitle.text = "تنظیمات (Settings)"
+        tvMessage.visibility = android.view.View.GONE
+        layoutSettings.visibility = android.view.View.VISIBLE
+        
         cbMusic.isChecked = prefs.getBoolean("music_enabled", true)
         cbSound.isChecked = prefs.getBoolean("sound_enabled", true)
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
-                // Save to memory
-                prefs.edit().putBoolean("music_enabled", cbMusic.isChecked).apply()
-                prefs.edit().putBoolean("sound_enabled", cbSound.isChecked).apply()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+            .create()
+
+        // Make dialog background transparent so our custom panel shows
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        btnPositive.text = "Save"
+        btnPositive.setOnClickListener {
+            prefs.edit().putBoolean("music_enabled", cbMusic.isChecked).apply()
+            prefs.edit().putBoolean("sound_enabled", cbSound.isChecked).apply()
+            dialog.dismiss()
+        }
+
+        btnNegative.text = "Cancel"
+        btnNegative.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
     }
 
-    private fun showTutorial() {
-        AlertDialog.Builder(this)
-            .setTitle("آموزش بازی (Tutorial)")
-            .setMessage("به امپراتوری بازار خوش آمدید!\n\n" +
-                    "۱. روی دکمه بزرگ ضربه بزنید تا سکه جمع کنید.\n" +
-                    "۲. با سکه‌ها اجناس را ارتقا دهید تا به فرش برسید.\n" +
-                    "۳. مراقب سکه‌های نفرین شده (بنفش) باشید! اگر روی آن‌ها بزنید سکه از دست می‌دهید.\n" +
-                    "۴. سکه‌های طلایی را سریع بزنید تا جایزه بگیرید.\n" +
-                    "۵. هرچه سریع‌تر به فرش برسید، رتبه شما بالاتر خواهد بود!")
-            .setPositiveButton("Got it", null)
-            .show()
-    }
-
-    private fun showLeaderboard(bestTime: Int) {
-        val mockScores = "1. Ali (علی) - 00:42\n2. Reza (رضا) - 00:51\n3. Sara (سارا) - 01:05"
-        val userScore = if (bestTime != 9999) String.format("%02d:%02d", bestTime / 60, bestTime % 60) else "--:--"
+    private fun showCustomDialog(title: String, message: String, posText: String, negText: String?, isAd: Boolean) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_message, null)
         
-        AlertDialog.Builder(this)
-            .setTitle("نفرات برتر (Leaderboard)")
-            .setMessage("Top Bazaar Merchants:\n\n$mockScores\n\nYour Best: $userScore")
-            .setPositiveButton("Close", null)
-            .show()
-    }
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val tvMessage = dialogView.findViewById<TextView>(R.id.tvDialogMessage)
+        val btnPositive = dialogView.findViewById<Button>(R.id.btnPositive)
+        val btnNegative = dialogView.findViewById<Button>(R.id.btnNegative)
 
-    private fun showShop() {
-        AlertDialog.Builder(this)
-            .setTitle("فروشگاه (Shop)")
-            .setMessage("Avatars & Cosmetics coming soon!\n\n(In the future, you will buy these with your earned coins).")
-            .setPositiveButton("Close", null)
-            .show()
+        tvTitle.text = title
+        tvMessage.text = message
+        btnPositive.text = posText
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        btnPositive.setOnClickListener { dialog.dismiss() }
+
+        if (negText != null) {
+            btnNegative.visibility = android.view.View.VISIBLE
+            btnNegative.text = negText
+            btnNegative.setOnClickListener { dialog.dismiss() }
+        } else {
+            btnNegative.visibility = android.view.View.GONE
+        }
+
+        dialog.show()
     }
 }
