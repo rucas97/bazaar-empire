@@ -1,13 +1,11 @@
 package com.example.bazaarempire
 
-import android.app.AlertDialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.app.Dialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -27,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     private var secondsElapsed = 0
     private var isGameRunning = false
     private var hasWon = false
-    private var badCoinClickCount = 0 
 
     private lateinit var tvCoinCount: TextView
     private lateinit var tvUpgradeCost: TextView
@@ -88,14 +85,10 @@ class MainActivity : AppCompatActivity() {
                 btnTap.animate().scaleX(1f).scaleY(1f).setDuration(50).start()
             }.start()
 
-            // HARD MODE: 35% Bad Coin, 5% Good Coin (Total 40% chance to spawn)
             if (btnGoldenDeal.visibility == View.GONE && btnBadCoin.visibility == View.GONE) {
                 val chance = Random.nextInt(100)
-                if (chance < 35) { 
-                    spawnSpecialCoin(btnBadCoin)  // Spawn Bad First
-                } else if (chance in 36..40) { 
-                    spawnSpecialCoin(btnGoldenDeal) // Rare Good Coin
-                }
+                if (chance < 10) spawnSpecialCoin(btnGoldenDeal)
+                else if (chance in 11..35) spawnSpecialCoin(btnBadCoin)
             }
         }
 
@@ -109,19 +102,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnBadCoin.setOnClickListener {
+            val fullPenalty = baseTapValue * 15
             btnBadCoin.visibility = View.GONE
             resumeTimerIfNeeded()
-            
-            badCoinClickCount++
-            val fullPenalty = baseTapValue * 15
 
-            // Show custom ad pop-up on 1st click, then every 3rd click
-            if (badCoinClickCount == 1 || badCoinClickCount % 3 == 1) {
-                showAdDialog(fullPenalty)
-            } else {
-                applyPenalty(fullPenalty)
-                Toast.makeText(this, "Cursed Coin! -$fullPenalty", Toast.LENGTH_SHORT).show()
-            }
+            // SHOW CUSTOM DIALOG
+            showBadCoinDialog(fullPenalty)
         }
 
         btnUpgrade.setOnClickListener {
@@ -155,31 +141,35 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        btnShop.setOnClickListener { finish() }
+        btnShop.setOnClickListener {
+            finish() // Return to menu
+        }
     }
 
-    private fun showAdDialog(penalty: Long) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_message, null)
-        val dialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(false).create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    private fun showBadCoinDialog(penalty: Long) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.setCancelable(false)
 
-        dialogView.findViewById<TextView>(R.id.tvDialogTitle).text = "Cursed Coin!"
-        dialogView.findViewById<TextView>(R.id.tvDialogMessage).text = "You will lose $penalty coins. Watch a mock ad to reduce damage by 50%?"
+        dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "سکه نفرین شده!"
+        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "شما $penalty سکه از دست می‌دهید.\nآیا می‌خواهید با تماشای تبلیغات خسارت را نصف کنید؟"
         
-        val btnAd = dialogView.findViewById<Button>(R.id.btnPositive)
-        val btnNo = dialogView.findViewById<Button>(R.id.btnNegative)
+        val btnPos = dialog.findViewById<Button>(R.id.btnDialogPositive)
+        val btnNeg = dialog.findViewById<Button>(R.id.btnDialogNegative)
 
-        btnAd.text = "Watch Ad"
-        btnAd.setOnClickListener {
-            val reducedPenalty = (penalty * 0.5).toLong()
-            applyPenalty(reducedPenalty)
+        btnPos.text = "تبلیغات"
+        btnNeg.text = "قبول خسارت"
+        btnNeg.visibility = View.VISIBLE
+
+        btnPos.setOnClickListener {
+            applyPenalty((penalty * 0.5).toLong())
             Toast.makeText(this, "TEST AD: Damage reduced!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
 
-        btnNo.text = "Accept"
-        btnNo.visibility = View.VISIBLE
-        btnNo.setOnClickListener {
+        btnNeg.setOnClickListener {
             applyPenalty(penalty)
             dialog.dismiss()
         }
@@ -198,13 +188,15 @@ class MainActivity : AppCompatActivity() {
         coinButton.x = Random.nextInt(50, 800).toFloat()
         coinButton.y = Random.nextInt(300, 1200).toFloat()
 
-        coinButton.scaleX = 0f; coinButton.scaleY = 0f
+        coinButton.scaleX = 0f
+        coinButton.scaleY = 0f
         coinButton.animate().scaleX(1.1f).scaleY(1.1f).setDuration(150).withEndAction {
             coinButton.animate().scaleX(1f).scaleY(1f).setDuration(50).start()
         }.start()
 
         handler.removeCallbacks(timerRunnable)
-        val displayTime = if (coinButton == btnBadCoin) 1200L else 2000L // Bad is fast, Good is 2s
+
+        val displayTime = if (coinButton == btnBadCoin) 1200L else 2500L
 
         handler.postDelayed({
             if (coinButton.visibility == View.VISIBLE) {
@@ -242,31 +234,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         val rank = when {
-            secondsElapsed < 45 -> "🏆 Bazaar Legend"
-            secondsElapsed < 90 -> "🥇 Master Merchant"
-            secondsElapsed < 150 -> "🥈 Skilled Merchant"
-            else -> "🥉 Novice"
+            secondsElapsed < 45 -> "افسانه بازار"
+            secondsElapsed < 90 -> "تاجر بزرگ"
+            secondsElapsed < 150 -> "تاجر ماهر"
+            else -> "تازه‌کار"
         }
 
-        // Custom Win Dialog
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_win, null)
-        val dialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(false).create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val recordText = if (isNewRecord) "\n\n🌟 رکورد جدید! 🌟" else ""
+        val message = "زمان: ${tvTimer.text}\nرتبه: $rank$recordText"
 
-        dialogView.findViewById<TextView>(R.id.tvWinStats).text = "Time: ${tvTimer.text}\nRank: $rank"
-        if (isNewRecord) {
-            dialogView.findViewById<TextView>(R.id.tvNewRecord).visibility = View.VISIBLE
-        }
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.setCancelable(false)
 
-        dialogView.findViewById<Button>(R.id.btnMenu).setOnClickListener { 
-            dialog.dismiss()
-            finish() // Safely closes game without crashing
-        }
+        dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "پیروزی!"
+        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = message
         
-        dialogView.findViewById<Button>(R.id.btnAgain).setOnClickListener { 
-            dialog.dismiss()
-            resetGame() 
-        }
+        val btnPos = dialog.findViewById<Button>(R.id.btnDialogPositive)
+        val btnNeg = dialog.findViewById<Button>(R.id.btnDialogNegative)
+
+        btnPos.text = "بازی مجدد"
+        btnNeg.text = "منو"
+        btnNeg.visibility = View.VISIBLE
+
+        btnPos.setOnClickListener { dialog.dismiss(); resetGame() }
+        btnNeg.setOnClickListener { dialog.dismiss(); finish() }
 
         dialog.show()
     }
@@ -274,7 +268,6 @@ class MainActivity : AppCompatActivity() {
     private fun resetGame() {
         coins = 0L; currentItemIndex = 0; upgradeCost = 10L; baseTapValue = 1L
         isAdBoostActive = false; secondsElapsed = 0; isGameRunning = false; hasWon = false
-        badCoinClickCount = 0
         tvTimer.text = "00:00"
         itemImage.setImageResource(items[0])
         btnGoldenDeal.visibility = View.GONE; btnBadCoin.visibility = View.GONE

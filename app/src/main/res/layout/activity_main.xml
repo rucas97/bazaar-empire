@@ -1,74 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent" android:background="#1A4A4A">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A4A4A">
 
-    <ImageView android:id="@+id/bgImage" android:layout_width="match_parent" android:layout_height="match_parent"
-        android:scaleType="centerCrop" android:src="@drawable/bg_bazaar"
-        app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageView android:id="@+id/scorePanel" android:layout_width="360dp" android:layout_height="90dp"
-        android:layout_marginTop="16dp" android:scaleType="fitCenter" android:src="@drawable/panel_score"
-        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+    <ImageView
+        android:id="@+id/bgImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_bazaar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView android:id="@+id/tvCoinCount" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="0" android:textColor="#F5E6D3" android:textSize="32sp" android:textStyle="bold"
-        android:shadowColor="#000" android:shadowDx="2" android:shadowDy="2" android:shadowRadius="2"
-        app:layout_constraintTop_toTopOf="@+id/scorePanel" app:layout_constraintBottom_toBottomOf="@+id/scorePanel"
-        app:layout_constraintStart_toStartOf="@+id/scorePanel" app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
-
-    <TextView android:id="@+id/tvTimer" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" android:background="#1A4A4A" android:paddingHorizontal="16dp"
-        android:paddingVertical="4dp" android:text="00:00" android:textColor="#F4C430" android:textSize="24sp"
-        android:textStyle="bold" app:layout_constraintTop_toBottomOf="@+id/scorePanel"
-        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageButton android:id="@+id/btnShop" android:layout_width="70dp" android:layout_height="70dp"
-        android:layout_marginTop="8dp" android:layout_marginStart="16dp" android:background="@android:color/transparent"
-        android:scaleType="fitCenter" android:src="@drawable/btn_shop"
-        app:layout_constraintTop_toBottomOf="@+id/tvTimer" app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageButton android:id="@+id/btnAd" android:layout_width="140dp" android:layout_height="50dp"
-        android:layout_marginTop="16dp" android:layout_marginEnd="16dp" android:background="@android:color/transparent"
-        android:scaleType="fitCenter" android:src="@drawable/btn_ad"
-        app:layout_constraintTop_toBottomOf="@+id/tvTimer" app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageView android:id="@+id/itemImage" android:layout_width="120dp" android:layout_height="120dp"
-        android:layout_marginBottom="16dp" android:src="@drawable/item_tea"
-        app:layout_constraintBottom_toTopOf="@+id/btnTap" app:layout_constraintStart_toStartOf="parent"
+    <ImageView
+        android:id="@+id/scorePanel"
+        android:layout_width="360dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="fitCenter" 
+        android:src="@drawable/panel_score"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageView android:id="@+id/ivSparkle" android:layout_width="150dp" android:layout_height="150dp"
-        android:src="@drawable/coin" android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/itemImage" app:layout_constraintEnd_toEndOf="@+id/itemImage"
-        app:layout_constraintStart_toStartOf="@+id/itemImage" app:layout_constraintTop_toTopOf="@+id/itemImage" />
+    <TextView
+        android:id="@+id/tvCoinCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textColor="#F5E6D3"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:shadowColor="#000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        app:layout_constraintTop_toTopOf="@+id/scorePanel"
+        app:layout_constraintBottom_toBottomOf="@+id/scorePanel"
+        app:layout_constraintStart_toStartOf="@+id/scorePanel"
+        app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
-    <ImageButton android:id="@+id/btnTap" android:layout_width="160dp" android:layout_height="160dp"
-        android:layout_marginBottom="24dp" android:background="@android:color/transparent"
-        android:scaleType="fitCenter" android:src="@drawable/btn_tap"
-        app:layout_constraintBottom_toTopOf="@+id/btnUpgrade" app:layout_constraintStart_toStartOf="parent"
+    <TextView
+        android:id="@+id/tvTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="#1A4A4A"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="4dp"
+        android:text="00:00"
+        android:textColor="#F4C430"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/scorePanel"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageButton android:id="@+id/btnUpgrade" android:layout_width="320dp" android:layout_height="80dp"
-        android:layout_marginBottom="24dp" android:background="@android:color/transparent"
-        android:scaleType="fitCenter" android:src="@drawable/btn_upgrade"
-        app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+    <ImageButton
+        android:id="@+id/btnShop"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_shop"
+        app:layout_constraintTop_toBottomOf="@+id/tvTimer"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- AD BUTTON WITH TEXT -->
+    <ImageButton
+        android:id="@+id/btnAd"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_ad"
+        app:layout_constraintTop_toBottomOf="@+id/tvTimer"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView android:id="@+id/tvUpgradeCost" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Upgrade: 10" android:textColor="#F5E6D3" android:textSize="16sp" android:textStyle="bold"
-        android:shadowColor="#000" android:shadowDx="1" android:shadowDy="1"
-        app:layout_constraintTop_toTopOf="@+id/btnUpgrade" app:layout_constraintBottom_toBottomOf="@+id/btnUpgrade"
-        app:layout_constraintStart_toStartOf="@+id/btnUpgrade" app:layout_constraintEnd_toEndOf="@+id/btnUpgrade" />
+    <!-- The Farsi text over the ad button -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="تبلیغات"
+        android:textColor="#F5E6D3"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:paddingStart="40dp" 
+        app:layout_constraintTop_toTopOf="@+id/btnAd"
+        app:layout_constraintBottom_toBottomOf="@+id/btnAd"
+        app:layout_constraintStart_toStartOf="@+id/btnAd"
+        app:layout_constraintEnd_toEndOf="@+id/btnAd" />
 
-    <ImageButton android:id="@+id/btnGoldenDeal" android:layout_width="80dp" android:layout_height="80dp"
-        android:background="@android:color/transparent" android:scaleType="fitCenter" android:src="@drawable/coin"
-        android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent" />
+    <ImageView
+        android:id="@+id/itemImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/item_tea"
+        app:layout_constraintBottom_toTopOf="@+id/btnTap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageButton android:id="@+id/btnBadCoin" android:layout_width="80dp" android:layout_height="80dp"
-        android:background="@android:color/transparent" android:scaleType="fitCenter" android:src="@drawable/coin_bad"
-        android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent" />
+    <ImageView
+        android:id="@+id/ivSparkle"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/coin"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/itemImage"
+        app:layout_constraintEnd_toEndOf="@+id/itemImage"
+        app:layout_constraintStart_toStartOf="@+id/itemImage"
+        app:layout_constraintTop_toTopOf="@+id/itemImage" />
+
+    <ImageButton
+        android:id="@+id/btnTap"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginBottom="24dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_tap"
+        app:layout_constraintBottom_toTopOf="@+id/btnUpgrade"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnUpgrade"
+        android:layout_width="320dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="24dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_upgrade"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvUpgradeCost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upgrade: 10"
+        android:textColor="#F5E6D3"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:shadowColor="#000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        app:layout_constraintTop_toTopOf="@+id/btnUpgrade"
+        app:layout_constraintBottom_toBottomOf="@+id/btnUpgrade"
+        app:layout_constraintStart_toStartOf="@+id/btnUpgrade"
+        app:layout_constraintEnd_toEndOf="@+id/btnUpgrade" />
+
+    <ImageButton
+        android:id="@+id/btnGoldenDeal"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/coin"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnBadCoin"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/coin_bad"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

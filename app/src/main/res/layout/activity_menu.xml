@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="#1A4A4A">
 
-    <!-- Background -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,25 +16,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
+    <!-- YOUR NEW LOGO -->
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:text="Bazaar Empire"
-        android:textColor="#F4C430"
-        android:textSize="48sp"
-        android:textStyle="bold"
-        android:shadowColor="#000"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="3"
+        android:layout_marginTop="50dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/logo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Best Time -->
+    <!-- Old Text Title (Hidden so it doesn't overlap the logo) -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="امپراطوری بازار"
+        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
         android:id="@+id/tvBestTime"
         android:layout_width="wrap_content"
@@ -50,11 +53,10 @@
         android:shadowColor="#000"
         android:shadowDx="2"
         android:shadowDy="2"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- BIG CENTER PLAY BUTTON -->
     <ImageButton
         android:id="@+id/btnPlay"
         android:layout_width="160dp"
@@ -67,7 +69,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- BOTTOM ROW OF BUTTONS -->
     <LinearLayout
         android:id="@+id/bottomMenu"
         android:layout_width="match_parent"
