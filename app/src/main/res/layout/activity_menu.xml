@@ -1,52 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent" android:background="#1A4A4A">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A4A4A">
 
-    <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:scaleType="centerCrop" android:src="@drawable/bg_menu"
-        app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView android:id="@+id/tvTitle" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="60dp" android:text="Bazaar Empire" android:textColor="#F4C430"
-        android:textSize="42sp" android:textStyle="bold" android:shadowColor="#000" android:shadowDx="3"
-        android:shadowDy="3" android:shadowRadius="3" app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView android:id="@+id/tvBestTime" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" android:text="Best Time: --:--" android:textColor="#F5E6D3"
-        android:textSize="20sp" android:textStyle="bold" android:shadowColor="#000" android:shadowDx="2"
-        android:shadowDy="2" app:layout_constraintTop_toBottomOf="@+id/tvTitle"
-        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageView android:id="@+id/menuPanel" android:layout_width="300dp" android:layout_height="450dp"
-        android:layout_marginTop="20dp" android:scaleType="fitCenter" android:src="@drawable/panel_window"
-        app:layout_constraintTop_toBottomOf="@+id/tvBestTime" app:layout_constraintStart_toStartOf="parent"
+    <!-- Background -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_menu"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageButton android:id="@+id/btnPlay" android:layout_width="70dp" android:layout_height="70dp"
-        android:background="@android:color/transparent" android:scaleType="fitCenter" android:src="@drawable/icon_play"
-        app:layout_constraintTop_toTopOf="@+id/menuPanel" app:layout_constraintBottom_toTopOf="@+id/btnShop"
-        app:layout_constraintStart_toStartOf="@+id/menuPanel" app:layout_constraintEnd_toEndOf="@+id/menuPanel" />
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:text="Bazaar Empire"
+        android:textColor="#F4C430"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:shadowColor="#000"
+        android:shadowDx="3"
+        android:shadowDy="3"
+        android:shadowRadius="3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageButton android:id="@+id/btnShop" android:layout_width="70dp" android:layout_height="70dp"
-        android:background="@android:color/transparent" android:scaleType="fitCenter" android:src="@drawable/icon_shop"
-        app:layout_constraintTop_toBottomOf="@+id/btnPlay" app:layout_constraintBottom_toTopOf="@+id/btnLeaderboard"
-        app:layout_constraintStart_toStartOf="@+id/menuPanel" app:layout_constraintEnd_toEndOf="@+id/menuPanel" />
+    <!-- Best Time -->
+    <TextView
+        android:id="@+id/tvBestTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="#1A4A4A"
+        android:padding="8dp"
+        android:text="Best Time: --:--"
+        android:textColor="#F5E6D3"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:shadowColor="#000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageButton android:id="@+id/btnLeaderboard" android:layout_width="70dp" android:layout_height="70dp"
-        android:background="@android:color/transparent" android:scaleType="fitCenter" android:src="@drawable/icon_trophy"
-        app:layout_constraintTop_toBottomOf="@+id/btnShop" app:layout_constraintBottom_toTopOf="@+id/btnTutorial"
-        app:layout_constraintStart_toStartOf="@+id/menuPanel" app:layout_constraintEnd_toEndOf="@+id/menuPanel" />
+    <!-- BIG CENTER PLAY BUTTON -->
+    <ImageButton
+        android:id="@+id/btnPlay"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/icon_play"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageButton android:id="@+id/btnTutorial" android:layout_width="70dp" android:layout_height="70dp"
-        android:background="@android:color/transparent" android:scaleType="fitCenter" android:src="@drawable/icon_book"
-        app:layout_constraintTop_toBottomOf="@+id/btnLeaderboard" app:layout_constraintBottom_toTopOf="@+id/btnSettings"
-        app:layout_constraintStart_toStartOf="@+id/menuPanel" app:layout_constraintEnd_toEndOf="@+id/menuPanel" />
+    <!-- BOTTOM ROW OF BUTTONS -->
+    <LinearLayout
+        android:id="@+id/bottomMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <ImageButton android:id="@+id/btnSettings" android:layout_width="70dp" android:layout_height="70dp"
-        android:background="@android:color/transparent" android:scaleType="fitCenter" android:src="@drawable/icon_gear"
-        app:layout_constraintTop_toBottomOf="@+id/btnTutorial" app:layout_constraintBottom_toBottomOf="@+id/menuPanel"
-        app:layout_constraintStart_toStartOf="@+id/menuPanel" app:layout_constraintEnd_toEndOf="@+id/menuPanel" />
+        <ImageButton
+            android:id="@+id/btnShop"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_shop" />
+
+        <ImageButton
+            android:id="@+id/btnLeaderboard"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_trophy" />
+
+        <ImageButton
+            android:id="@+id/btnTutorial"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_book" />
+
+        <ImageButton
+            android:id="@+id/btnSettings"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_gear" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

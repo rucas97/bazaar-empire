@@ -1,7 +1,6 @@
 package com.example.bazaarempire
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -24,6 +23,9 @@ class MainActivity : AppCompatActivity() {
     private var secondsElapsed = 0
     private var isGameRunning = false
     private var hasWon = false
+
+    // Bad Coin Ad Tracking
+    private var badCoinClickCount = 0 
 
     private lateinit var tvCoinCount: TextView
     private lateinit var tvUpgradeCost: TextView
@@ -84,10 +86,14 @@ class MainActivity : AppCompatActivity() {
                 btnTap.animate().scaleX(1f).scaleY(1f).setDuration(50).start()
             }.start()
 
+            // FASTER SPAWNS: 30% Bad Coin, 20% Good Coin
             if (btnGoldenDeal.visibility == View.GONE && btnBadCoin.visibility == View.GONE) {
                 val chance = Random.nextInt(100)
-                if (chance < 10) spawnSpecialCoin(btnGoldenDeal)
-                else if (chance in 11..35) spawnSpecialCoin(btnBadCoin)
+                if (chance < 20) { 
+                    spawnSpecialCoin(btnGoldenDeal) 
+                } else if (chance in 21..50) { 
+                    spawnSpecialCoin(btnBadCoin) 
+                }
             }
         }
 
@@ -101,21 +107,32 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnBadCoin.setOnClickListener {
-            val fullPenalty = baseTapValue * 15
             btnBadCoin.visibility = View.GONE
             resumeTimerIfNeeded()
+            
+            badCoinClickCount++
+            val fullPenalty = baseTapValue * 15
 
-            AlertDialog.Builder(this)
-                .setTitle("Cursed Coin! (سکه نفرین شده)")
-                .setMessage("You will lose $fullPenalty coins. Watch a mock ad to reduce damage by 50%?")
-                .setPositiveButton("Watch Ad") { _, _ ->
-                    val reducedPenalty = (fullPenalty * 0.5).toLong()
-                    applyPenalty(reducedPenalty)
-                    Toast.makeText(this, "TEST AD: Damage reduced!", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("Accept Damage") { _, _ -> applyPenalty(fullPenalty) }
-                .setCancelable(false)
-                .show()
+            // Show ad on 1st click, then every 3rd click (1, 4, 7, 10...)
+            if (badCoinClickCount == 1 || badCoinClickCount % 3 == 1) {
+                AlertDialog.Builder(this)
+                    .setTitle("Cursed Coin! (سکه نفرین شده)")
+                    .setMessage("You will lose $fullPenalty coins. Watch a mock ad to reduce damage by 50%?")
+                    .setPositiveButton("Watch Ad") { _, _ ->
+                        val reducedPenalty = (fullPenalty * 0.5).toLong()
+                        applyPenalty(reducedPenalty)
+                        Toast.makeText(this, "TEST AD: Damage reduced!", Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton("Accept Damage") { _, _ ->
+                        applyPenalty(fullPenalty)
+                    }
+                    .setCancelable(false)
+                    .show()
+            } else {
+                // No ad, instant penalty
+                applyPenalty(fullPenalty)
+                Toast.makeText(this, "Cursed Coin! -$fullPenalty", Toast.LENGTH_SHORT).show()
+            }
         }
 
         btnUpgrade.setOnClickListener {
@@ -128,6 +145,7 @@ class MainActivity : AppCompatActivity() {
                     currentItemIndex++
                     itemImage.setImageResource(items[currentItemIndex])
                     playSparkleAnimation()
+
                     if (currentItemIndex == items.size - 1) winGame()
                 }
                 updateUI()
@@ -141,13 +159,15 @@ class MainActivity : AppCompatActivity() {
                 isAdBoostActive = true
                 Toast.makeText(this, "TEST AD: 2x Income for 30 seconds!", Toast.LENGTH_SHORT).show()
                 updateUI()
-                handler.postDelayed({ isAdBoostActive = false; updateUI() }, 30000) 
+                handler.postDelayed({
+                    isAdBoostActive = false
+                    updateUI()
+                }, 30000) 
             }
         }
 
-        // EXIT TO MENU BUTTON (Shop button acts as Menu return)
+        // Go back to menu
         btnShop.setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
             finish()
         }
     }
@@ -163,12 +183,15 @@ class MainActivity : AppCompatActivity() {
         coinButton.x = Random.nextInt(50, 800).toFloat()
         coinButton.y = Random.nextInt(300, 1200).toFloat()
 
-        coinButton.scaleX = 0f; coinButton.scaleY = 0f
+        coinButton.scaleX = 0f
+        coinButton.scaleY = 0f
         coinButton.animate().scaleX(1.1f).scaleY(1.1f).setDuration(150).withEndAction {
             coinButton.animate().scaleX(1f).scaleY(1f).setDuration(50).start()
         }.start()
 
         handler.removeCallbacks(timerRunnable)
+
+        // Bad coin (1.2s), Good coin (2.5s)
         val displayTime = if (coinButton == btnBadCoin) 1200L else 2500L
 
         handler.postDelayed({
@@ -200,6 +223,7 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val previousBest = prefs.getInt("best_time", 9999)
         var isNewRecord = false
+
         if (secondsElapsed < previousBest) {
             prefs.edit().putInt("best_time", secondsElapsed).apply()
             isNewRecord = true
@@ -211,17 +235,14 @@ class MainActivity : AppCompatActivity() {
             secondsElapsed < 150 -> "🥈 Skilled Merchant"
             else -> "🥉 Novice"
         }
+
         val recordText = if (isNewRecord) "\n\n🌟 NEW RECORD! 🌟" else ""
 
         AlertDialog.Builder(this)
             .setTitle("Grand Bazaar Reached!")
             .setMessage("Time: ${tvTimer.text}\n\nRank: $rank$recordText")
             .setCancelable(false)
-            .setPositiveButton("Back to Menu") { _, _ -> 
-                // FIXED: Launch menu explicitly
-                startActivity(Intent(this, MenuActivity::class.java))
-                finish() 
-            }
+            .setPositiveButton("Back to Menu") { _, _ -> finish() }
             .setNegativeButton("Play Again") { _, _ -> resetGame() }
             .show()
     }
@@ -229,6 +250,7 @@ class MainActivity : AppCompatActivity() {
     private fun resetGame() {
         coins = 0L; currentItemIndex = 0; upgradeCost = 10L; baseTapValue = 1L
         isAdBoostActive = false; secondsElapsed = 0; isGameRunning = false; hasWon = false
+        badCoinClickCount = 0
         tvTimer.text = "00:00"
         itemImage.setImageResource(items[0])
         btnGoldenDeal.visibility = View.GONE; btnBadCoin.visibility = View.GONE
