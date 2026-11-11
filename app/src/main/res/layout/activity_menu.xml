@@ -16,26 +16,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- YOUR NEW LOGO -->
-    <ImageView
-        android:id="@+id/ivLogo"
-        android:layout_width="280dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:adjustViewBounds="true"
-        android:src="@drawable/logo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Old Text Title (Hidden so it doesn't overlap the logo) -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_marginTop="80dp"
         android:text="امپراطوری بازار"
-        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
+        android:textColor="#F4C430"
+        android:textSize="42sp"
+        android:textStyle="bold"
+        android:shadowColor="#000"
+        android:shadowDx="3"
+        android:shadowDy="3"
+        android:shadowRadius="3"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -53,7 +47,7 @@
         android:shadowColor="#000"
         android:shadowDx="2"
         android:shadowDy="2"
-        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -114,5 +108,4 @@
             android:scaleType="fitCenter"
             android:src="@drawable/icon_gear" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

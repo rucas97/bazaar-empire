@@ -105,8 +105,6 @@ class MainActivity : AppCompatActivity() {
             val fullPenalty = baseTapValue * 15
             btnBadCoin.visibility = View.GONE
             resumeTimerIfNeeded()
-
-            // SHOW CUSTOM DIALOG
             showBadCoinDialog(fullPenalty)
         }
 
@@ -142,8 +140,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnShop.setOnClickListener {
-            finish() // Return to menu
+            finish()
         }
+    }
+
+    // CRASH FIX: Stop all handlers before destroying the activity
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
     }
 
     private fun showBadCoinDialog(penalty: Long) {

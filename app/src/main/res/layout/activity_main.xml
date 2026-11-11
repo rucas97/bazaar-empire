@@ -73,7 +73,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvTimer"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- AD BUTTON WITH TEXT -->
     <ImageButton
         android:id="@+id/btnAd"
         android:layout_width="140dp"
@@ -86,7 +85,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvTimer"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- The Farsi text over the ad button -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -145,6 +143,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Shifted text up so it doesn't overlap the coin -->
     <TextView
         android:id="@+id/tvUpgradeCost"
         android:layout_width="wrap_content"
@@ -157,7 +156,7 @@
         android:shadowDx="1"
         android:shadowDy="1"
         app:layout_constraintTop_toTopOf="@+id/btnUpgrade"
-        app:layout_constraintBottom_toBottomOf="@+id/btnUpgrade"
+        app:layout_constraintBottom_toTopOf="@+id/btnUpgrade"
         app:layout_constraintStart_toStartOf="@+id/btnUpgrade"
         app:layout_constraintEnd_toEndOf="@+id/btnUpgrade" />
 
