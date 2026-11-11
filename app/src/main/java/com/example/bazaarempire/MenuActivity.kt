@@ -96,31 +96,24 @@ class MenuActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_custom)
+        dialog.setContentView(R.layout.dialog_settings) // Use the new layout!
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "تنظیمات"
-        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "تنظیمات صدا و موسیقی:"
-        
-        // Hiding default buttons
-        dialog.findViewById<Button>(R.id.btnDialogPositive).visibility = android.view.View.GONE
-        dialog.findViewById<Button>(R.id.btnDialogNegative).visibility = android.view.View.GONE
+        val cbMusic = dialog.findViewById<CheckBox>(R.id.cbMusic)
+        val cbSound = dialog.findViewById<CheckBox>(R.id.cbSound)
+        val btnSave = dialog.findViewById<Button>(R.id.btnSaveSettings)
 
-        // We will add checkboxes dynamically for now (Simplified)
-        val cbMusic = CheckBox(this)
-        cbMusic.text = "موسیقی"
+        // Load current settings
         cbMusic.isChecked = prefs.getBoolean("music_enabled", true)
-        cbMusic.setTextColor(android.graphics.Color.WHITE)
-        
-        val cbSound = CheckBox(this)
-        cbSound.text = "افکت صوتی"
         cbSound.isChecked = prefs.getBoolean("sound_enabled", true)
-        cbSound.setTextColor(android.graphics.Color.WHITE)
 
-        // This is a quick hack to add checkboxes to the custom layout
-        val layout = dialog.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.tvDialogMessage.parent as Int)
-        // Just close the dialog on save for now.
-        
+        btnSave.setOnClickListener {
+            // Save settings
+            prefs.edit().putBoolean("music_enabled", cbMusic.isChecked).apply()
+            prefs.edit().putBoolean("sound_enabled", cbSound.isChecked).apply()
+            dialog.dismiss()
+        }
+
         dialog.show()
     }
 }
