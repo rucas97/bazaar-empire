@@ -96,19 +96,17 @@ class MenuActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_settings) // Use the new layout!
+        dialog.setContentView(R.layout.dialog_settings) // Uses the clean settings layout!
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val cbMusic = dialog.findViewById<CheckBox>(R.id.cbMusic)
         val cbSound = dialog.findViewById<CheckBox>(R.id.cbSound)
         val btnSave = dialog.findViewById<Button>(R.id.btnSaveSettings)
 
-        // Load current settings
         cbMusic.isChecked = prefs.getBoolean("music_enabled", true)
         cbSound.isChecked = prefs.getBoolean("sound_enabled", true)
 
         btnSave.setOnClickListener {
-            // Save settings
             prefs.edit().putBoolean("music_enabled", cbMusic.isChecked).apply()
             prefs.edit().putBoolean("sound_enabled", cbSound.isChecked).apply()
             dialog.dismiss()
