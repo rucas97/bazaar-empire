@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Score Panel (Slightly smaller) -->
+    <!-- Score Panel -->
     <ImageView
         android:id="@+id/scorePanel"
         android:layout_width="280dp"
@@ -29,7 +29,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Coin Text (Reduced size) -->
     <TextView
         android:id="@+id/tvCoinCount"
         android:layout_width="wrap_content"
@@ -47,51 +46,51 @@
         app:layout_constraintStart_toStartOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
-    <!-- Timer -->
-    <TextView
-        android:id="@+id/tvTimer"
-        android:layout_width="wrap_content"
+    <!-- Perfectly Aligned Shop and Ad Buttons -->
+    <LinearLayout
+        android:id="@+id/topButtonsLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="#1A4A4A"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="4dp"
-        android:text="00:00"
-        android:textColor="#F4C430"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/scorePanel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/scorePanel">
 
-    <!-- Shop button (Aligned neatly) -->
-    <ImageButton
-        android:id="@+id/btnShop"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:src="@drawable/btn_shop"
-        app:layout_constraintTop_toBottomOf="@+id/scorePanel"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ImageButton
+            android:id="@+id/btnShop"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginEnd="20dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/btn_shop" />
 
-    <!-- Ad button (Aligned neatly) -->
-    <ImageButton
-        android:id="@+id/btnAd"
-        android:layout_width="120dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:src="@drawable/btn_ad"
-        app:layout_constraintTop_toBottomOf="@+id/scorePanel"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- Timer in the middle -->
+        <TextView
+            android:id="@+id/tvTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_timer"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="8dp"
+            android:text="00:00"
+            android:textColor="#F4C430"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
+        <ImageButton
+            android:id="@+id/btnAd"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/btn_ad" />
+    </LinearLayout>
+
+    <!-- Ad text overlay -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -127,7 +126,6 @@
         app:layout_constraintStart_toStartOf="@+id/itemImage"
         app:layout_constraintTop_toTopOf="@+id/itemImage" />
 
-    <!-- Play/Tap button (Added adjustViewBounds for sharpness) -->
     <ImageButton
         android:id="@+id/btnTap"
         android:layout_width="160dp"

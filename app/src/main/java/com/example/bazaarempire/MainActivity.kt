@@ -18,11 +18,10 @@ class MainActivity : AppCompatActivity() {
 
     private var coins = 0L
     private var currentItemIndex = 0
-    private var upgradeCost = 30L // Starts at 30 now
+    private var upgradeCost = 30L
     private var baseTapValue = 1L
     private var isAdBoostActive = false
-    
-    private var badCoinClickCount = 0 // Tracks how many times cursed coin is clicked
+    private var badCoinClickCount = 0
 
     private var secondsElapsed = 0
     private var isGameRunning = false
@@ -72,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         btnGoldenDeal = findViewById(R.id.btnGoldenDeal)
         btnBadCoin = findViewById(R.id.btnBadCoin)
 
+        loadGameData() // Load saved data if it exists
         updateUI()
 
         btnTap.setOnClickListener {
@@ -109,7 +109,6 @@ class MainActivity : AppCompatActivity() {
             resumeTimerIfNeeded()
             
             badCoinClickCount++
-            // Only show ad prompt on the 1st click, and every 3rd click after
             if (badCoinClickCount == 1 || badCoinClickCount % 3 == 0) {
                 showBadCoinDialog(fullPenalty)
             } else {
@@ -122,7 +121,7 @@ class MainActivity : AppCompatActivity() {
             if (coins >= upgradeCost) {
                 coins -= upgradeCost
                 upgradeCost = (upgradeCost * 1.5).toLong() 
-                baseTapValue += 3 // Changed to +3 for faster scaling
+                baseTapValue += 3
 
                 if (currentItemIndex < items.size - 1) {
                     currentItemIndex++
@@ -154,9 +153,50 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        saveGameData() // Saves game when you leave the screen
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacksAndMessages(null)
+        handler.removeCallbacksAndMessages(null) // Kills timer to prevent crash
+    }
+
+    private fun saveGameData() {
+        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
+        prefs.edit().apply {
+            putLong("saved_coins", coins)
+            putInt("saved_item_index", currentItemIndex)
+            putLong("saved_upgrade_cost", upgradeCost)
+            putLong("saved_tap_value", baseTapValue)
+            putInt("saved_time", secondsElapsed)
+            putBoolean("saved_game_running", isGameRunning)
+            apply()
+        }
+    }
+
+    private fun loadGameData() {
+        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
+        coins = prefs.getLong("saved_coins", 0L)
+        currentItemIndex = prefs.getInt("saved_item_index", 0)
+        upgradeCost = prefs.getLong("saved_upgrade_cost", 30L)
+        baseTapValue = prefs.getLong("saved_tap_value", 1L)
+        secondsElapsed = prefs.getInt("saved_time", 0)
+        isGameRunning = prefs.getBoolean("saved_game_running", false)
+        
+        tvTimer.text = String.format("%02d:%02d", secondsElapsed / 60, secondsElapsed % 60)
+        itemImage.setImageResource(items[currentItemIndex])
+        
+        if (isGameRunning) {
+            handler.post(timerRunnable)
+        }
+    }
+
+    private fun clearSavedData() {
+        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
+        prefs.edit().remove("saved_coins").remove("saved_item_index").remove("saved_upgrade_cost")
+            .remove("saved_tap_value").remove("saved_time").remove("saved_game_running").apply()
     }
 
     private fun showBadCoinDialog(penalty: Long) {
@@ -236,6 +276,7 @@ class MainActivity : AppCompatActivity() {
         isGameRunning = false
         hasWon = true
         handler.removeCallbacks(timerRunnable)
+        clearSavedData() // Game finished, clear saved data
 
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val previousBest = prefs.getInt("best_time", 9999)
@@ -272,8 +313,15 @@ class MainActivity : AppCompatActivity() {
         btnNeg.text = "منو"
         btnNeg.visibility = View.VISIBLE
 
-        btnPos.setOnClickListener { dialog.dismiss(); resetGame() }
-        btnNeg.setOnClickListener { dialog.dismiss(); finish() }
+        // Fix Crash: Dismiss dialog FIRST, then reset or finish
+        btnPos.setOnClickListener { 
+            dialog.dismiss()
+            resetGame() 
+        }
+        btnNeg.setOnClickListener { 
+            dialog.dismiss()
+            finish() 
+        }
 
         dialog.show()
     }

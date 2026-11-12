@@ -49,11 +49,7 @@ class MenuActivity : AppCompatActivity() {
         }
 
         findViewById<ImageButton>(R.id.btnShop).setOnClickListener {
-            showCustomDialog(
-                title = "فروشگاه",
-                message = "آواتارها و ظاهر جدید به زودی اضافه می‌شوند!",
-                posText = "بستن"
-            )
+            showShopDialog()
         }
 
         findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
@@ -92,11 +88,24 @@ class MenuActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun showShopDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_shop) // New Scrollable Shop
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialog.findViewById<Button>(R.id.btnCloseShop).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
     private fun showSettingsDialog() {
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_settings) // Uses the clean settings layout!
+        dialog.setContentView(R.layout.dialog_settings)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val cbMusic = dialog.findViewById<CheckBox>(R.id.cbMusic)
