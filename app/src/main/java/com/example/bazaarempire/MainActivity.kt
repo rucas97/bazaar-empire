@@ -40,6 +40,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnBadCoin: ImageButton
 
     private val handler = Handler(Looper.getMainLooper())
+    
+    // Saffron is now the final item
     private val items = listOf(
         R.drawable.item_tea, R.drawable.item_spices, R.drawable.item_pistachios,
         R.drawable.item_copper, R.drawable.item_carpet, R.drawable.item_saffron
@@ -57,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Helper to convert English numbers to Farsi
     private fun toPersianDigits(number: String): String {
         var result = number
         val englishDigits = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
@@ -345,7 +346,6 @@ class MainActivity : AppCompatActivity() {
         btnNeg.text = "منو"
         btnNeg.visibility = View.VISIBLE
 
-        // CRASH FIX: Safely remove all callbacks BEFORE dismissing or resetting
         btnPos.setOnClickListener { 
             handler.removeCallbacksAndMessages(null)
             dialog.dismiss()
