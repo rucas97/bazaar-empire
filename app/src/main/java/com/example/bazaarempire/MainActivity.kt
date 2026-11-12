@@ -19,7 +19,6 @@ import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -101,10 +100,7 @@ class MainActivity : AppCompatActivity() {
         val activeAvatar = prefs.getInt("active_avatar", R.drawable.avatar_default)
         findViewById<ImageView>(R.id.imgPlayerAvatar).setImageResource(activeAvatar)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val loginResult = SupabaseManager.ensureAnonymousLogin()
-            withContext(Dispatchers.Main) { Toast.makeText(this@MainActivity, loginResult, Toast.LENGTH_LONG).show() }
-        }
+        CoroutineScope(Dispatchers.IO).launch { SupabaseManager.ensureAnonymousLogin() }
 
         initAudio()
         loadGameData()
@@ -361,17 +357,13 @@ class MainActivity : AppCompatActivity() {
         val recordText = if (isNewRecord) "\n\n🌟 رکورد جدید! 🌟" else ""
         val message = "زمان: ${tvTimer.text}\nرتبه: $rank$recordText"
 
-        // SHOW SUPABASE RESULT ON SCREEN
         CoroutineScope(Dispatchers.IO).launch {
-            val resultMessage = SupabaseManager.submitScore(
+            SupabaseManager.submitScore(
                 prefs.getString("unique_id", "BX-0000") ?: "BX-0000",
                 prefs.getString("user_name", "بازاری") ?: "بازاری",
                 prefs.getString("contact_info", "NONE") ?: "NONE",
                 secondsElapsed
             )
-            withContext(Dispatchers.Main) {
-                Toast.makeText(this@MainActivity, resultMessage, Toast.LENGTH_LONG).show()
-            }
         }
 
         val dialog = Dialog(this)
