@@ -20,7 +20,11 @@ class MenuActivity : AppCompatActivity() {
 
         val tvBestTime = findViewById<TextView>(R.id.tvBestTime)
         if (bestTime != 9999) {
-            tvBestTime.text = String.format("Best Time: %02d:%02d", bestTime / 60, bestTime % 60)
+            val mins = toPersianDigits(String.format("%02d", bestTime / 60))
+            val secs = toPersianDigits(String.format("%02d", bestTime % 60))
+            tvBestTime.text = "بهترین زمان: $mins:$secs"
+        } else {
+            tvBestTime.text = "بهترین زمان: --:--"
         }
 
         findViewById<ImageButton>(R.id.btnPlay).setOnClickListener {
@@ -32,7 +36,7 @@ class MenuActivity : AppCompatActivity() {
             showCustomDialog(
                 title = "آموزش بازی",
                 message = "۱. روی دکمه بزرگ ضربه بزنید تا سکه جمع کنید.\n" +
-                          "۲. اجناس را ارتقا دهید تا به فرش برسید.\n" +
+                          "۲. اجناس را ارتقا دهید تا به زعفران برسید.\n" +
                           "۳. مراقب سکه‌های نفرین شده باشید!\n" +
                           "۴. سکه‌های طلایی را سریع بزنید تا جایزه بگیرید.",
                 posText = "متوجه شدم"
@@ -40,10 +44,14 @@ class MenuActivity : AppCompatActivity() {
         }
 
         findViewById<ImageButton>(R.id.btnLeaderboard).setOnClickListener {
-            val userScore = if (bestTime != 9999) String.format("%02d:%02d", bestTime / 60, bestTime % 60) else "--:--"
+            val userScore = if (bestTime != 9999) {
+                val mins = toPersianDigits(String.format("%02d", bestTime / 60))
+                val secs = toPersianDigits(String.format("%02d", bestTime % 60))
+                "$mins:$secs"
+            } else "--:--"
             showCustomDialog(
                 title = "نفرات برتر",
-                message = "1. علی - 00:42\n2. رضا - 00:51\n3. سارا - 01:05\n\nرکورد شما: $userScore",
+                message = "۱. علی - ۰۰:۴۲\n۲. رضا - ۰۰:۵۱\n۳. سارا - ۰۱:۰۵\n\nرکورد شما: $userScore",
                 posText = "بستن"
             )
         }
@@ -57,7 +65,17 @@ class MenuActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCustomDialog(title: String, message: String, posText: String, negText: String? = null, onPositive: (() -> Unit)? = null, onNegative: (() -> Unit)? = null) {
+    private fun toPersianDigits(number: String): String {
+        var result = number
+        val englishDigits = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+        val persianDigits = charArrayOf('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹')
+        for (i in englishDigits.indices) {
+            result = result.replace(englishDigits[i], persianDigits[i])
+        }
+        return result
+    }
+
+    private fun showCustomDialog(title: String, message: String, posText: String) {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_custom)
@@ -66,25 +84,10 @@ class MenuActivity : AppCompatActivity() {
         dialog.findViewById<TextView>(R.id.tvDialogTitle).text = title
         dialog.findViewById<TextView>(R.id.tvDialogMessage).text = message
         val btnPos = dialog.findViewById<Button>(R.id.btnDialogPositive)
-        val btnNeg = dialog.findViewById<Button>(R.id.btnDialogNegative)
+        dialog.findViewById<Button>(R.id.btnDialogNegative).visibility = android.view.View.GONE
 
         btnPos.text = posText
-        btnPos.setOnClickListener {
-            onPositive?.invoke()
-            dialog.dismiss()
-        }
-
-        if (negText != null) {
-            btnNeg.visibility = android.view.View.VISIBLE
-            btnNeg.text = negText
-            btnNeg.setOnClickListener {
-                onNegative?.invoke()
-                dialog.dismiss()
-            }
-        } else {
-            btnNeg.visibility = android.view.View.GONE
-        }
-
+        btnPos.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 
@@ -97,7 +100,6 @@ class MenuActivity : AppCompatActivity() {
         dialog.findViewById<Button>(R.id.btnCloseShop).setOnClickListener {
             dialog.dismiss()
         }
-
         dialog.show()
     }
 

@@ -32,7 +32,7 @@
         android:id="@+id/tvCoinCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
+        android:text="۰"
         android:textColor="#F5E6D3"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -45,61 +45,73 @@
         app:layout_constraintStart_toStartOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
-    <!-- Aligned Top Row: Shop, Timer, Ad -->
-    <LinearLayout
+    <!-- PERFECTLY CENTERED TOP ROW -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topButtonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:gravity="center_vertical|center_horizontal"
-        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/scorePanel">
 
+        <!-- Shop on the far left -->
         <ImageButton
             android:id="@+id/btnShop"
             android:layout_width="85dp"
             android:layout_height="85dp"
+            android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:src="@drawable/btn_shop" />
+            android:src="@drawable/btn_shop"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTimer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvTimer" />
 
+        <!-- Timer exactly in the middle -->
         <TextView
             android:id="@+id/tvTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
             android:background="@drawable/bg_timer"
             android:paddingHorizontal="20dp"
             android:paddingVertical="8dp"
-            android:text="00:00"
+            android:text="۰۰:۰۰"
             android:textColor="#F4C430"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Ad Button on the far right -->
         <ImageButton
             android:id="@+id/btnAd"
             android:layout_width="150dp"
-            android:layout_height="65dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:src="@drawable/btn_ad" />
-    </LinearLayout>
+            android:src="@drawable/btn_ad"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTimer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvTimer" />
 
-    <!-- Ads Text perfectly centered over the Ad Button -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="تبلیغات"
-        android:textColor="#F5E6D3"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginStart="45dp" 
-        app:layout_constraintTop_toTopOf="@+id/btnAd"
-        app:layout_constraintBottom_toBottomOf="@+id/btnAd"
-        app:layout_constraintStart_toStartOf="@+id/btnAd"
-        app:layout_constraintEnd_toEndOf="@+id/btnAd" />
+        <!-- Ad Text inside the button -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="تبلیغات"
+            android:textColor="#F5E6D3"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginStart="40dp" 
+            app:layout_constraintTop_toTopOf="@+id/btnAd"
+            app:layout_constraintBottom_toBottomOf="@+id/btnAd"
+            app:layout_constraintStart_toStartOf="@+id/btnAd"
+            app:layout_constraintEnd_toEndOf="@+id/btnAd" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/itemImage"
@@ -153,7 +165,7 @@
         android:id="@+id/tvUpgradeCost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upgrade: 30"
+        android:text="ارتقا: ۳۰"
         android:textColor="#F5E6D3"
         android:textSize="16sp"
         android:textStyle="bold"

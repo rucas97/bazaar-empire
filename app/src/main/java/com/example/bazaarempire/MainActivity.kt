@@ -49,10 +49,23 @@ class MainActivity : AppCompatActivity() {
         override fun run() {
             if (isGameRunning) {
                 secondsElapsed++
-                tvTimer.text = String.format("%02d:%02d", secondsElapsed / 60, secondsElapsed % 60)
+                val mins = toPersianDigits(String.format("%02d", secondsElapsed / 60))
+                val secs = toPersianDigits(String.format("%02d", secondsElapsed % 60))
+                tvTimer.text = "$mins:$secs"
                 handler.postDelayed(this, 1000)
             }
         }
+    }
+
+    // Helper to convert English numbers to Farsi
+    private fun toPersianDigits(number: String): String {
+        var result = number
+        val englishDigits = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+        val persianDigits = charArrayOf('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹')
+        for (i in englishDigits.indices) {
+            result = result.replace(englishDigits[i], persianDigits[i])
+        }
+        return result
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         updateUI()
 
         btnTap.setOnClickListener {
-            if (hasWon) return@setOnClickListener // Block tapping after win
+            if (hasWon) return@setOnClickListener
 
             if (!isGameRunning) {
                 isGameRunning = true
@@ -100,7 +113,7 @@ class MainActivity : AppCompatActivity() {
             val bonus = baseTapValue * 10
             coins += bonus
             updateUI()
-            Toast.makeText(this, "Golden Deal! +$bonus", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "جایزه طلایی! +${toPersianDigits(bonus.toString())}", Toast.LENGTH_SHORT).show()
             btnGoldenDeal.visibility = View.GONE
             resumeTimerIfNeeded()
         }
@@ -115,13 +128,13 @@ class MainActivity : AppCompatActivity() {
                 showBadCoinDialog(fullPenalty)
             } else {
                 applyPenalty(fullPenalty)
-                Toast.makeText(this, "Cursed Coin! -$fullPenalty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "سکه نفرین شده! -${toPersianDigits(fullPenalty.toString())}", Toast.LENGTH_SHORT).show()
                 resumeTimerIfNeeded()
             }
         }
 
         btnUpgrade.setOnClickListener {
-            if (hasWon) return@setOnClickListener // Block upgrades after win
+            if (hasWon) return@setOnClickListener
 
             if (coins >= upgradeCost) {
                 coins -= upgradeCost
@@ -133,21 +146,20 @@ class MainActivity : AppCompatActivity() {
                     itemImage.setImageResource(items[currentItemIndex])
                     playSparkleAnimation()
 
-                    // Triggers Win state exactly when Carpet is unlocked
                     if (currentItemIndex == items.size - 1) {
                         winGame()
                     }
                 }
                 updateUI()
             } else {
-                Toast.makeText(this, "Not enough coins!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "سکه کافی ندارید!", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnAd.setOnClickListener {
             if (!isAdBoostActive) {
                 isAdBoostActive = true
-                Toast.makeText(this, "TEST AD: 2x Income for 30 seconds!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "تبلیغات تستی: درآمد ۲ برابر برای ۳۰ ثانیه!", Toast.LENGTH_SHORT).show()
                 updateUI()
                 handler.postDelayed({
                     isAdBoostActive = false
@@ -157,7 +169,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnShop.setOnClickListener {
-            // Safely exit
             handler.removeCallbacksAndMessages(null)
             saveGameData()
             finish()
@@ -184,7 +195,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveGameData() {
-        if (hasWon) return // Don't save if game is over
+        if (hasWon) return 
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         prefs.edit().apply {
             putLong("saved_coins", coins)
@@ -206,7 +217,9 @@ class MainActivity : AppCompatActivity() {
         secondsElapsed = prefs.getInt("saved_time", 0)
         isGameRunning = prefs.getBoolean("saved_game_running", false)
         
-        tvTimer.text = String.format("%02d:%02d", secondsElapsed / 60, secondsElapsed % 60)
+        val mins = toPersianDigits(String.format("%02d", secondsElapsed / 60))
+        val secs = toPersianDigits(String.format("%02d", secondsElapsed % 60))
+        tvTimer.text = "$mins:$secs"
         itemImage.setImageResource(items[currentItemIndex])
         
         if (isGameRunning) handler.post(timerRunnable)
@@ -226,7 +239,8 @@ class MainActivity : AppCompatActivity() {
         dialog.setCancelable(false)
 
         dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "سکه نفرین شده!"
-        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "شما $penalty سکه از دست می‌دهید.\nآیا می‌خواهید با تماشای تبلیغات خسارت را نصف کنید؟"
+        val penaltyFa = toPersianDigits(penalty.toString())
+        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "شما $penaltyFa سکه از دست می‌دهید.\nآیا می‌خواهید با تماشای تبلیغات خسارت را نصف کنید؟"
         
         val btnPos = dialog.findViewById<Button>(R.id.btnDialogPositive)
         val btnNeg = dialog.findViewById<Button>(R.id.btnDialogNegative)
@@ -237,7 +251,7 @@ class MainActivity : AppCompatActivity() {
 
         btnPos.setOnClickListener {
             applyPenalty((penalty * 0.5).toLong())
-            Toast.makeText(this, "TEST AD: Damage reduced!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "تبلیغات تستی: خسارت نصف شد!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
             resumeTimerIfNeeded()
         }
@@ -292,10 +306,9 @@ class MainActivity : AppCompatActivity() {
         pauseTimer()
         clearSavedData()
 
-        // Disable Upgrade Button visually
         btnUpgrade.isEnabled = false
         btnUpgrade.alpha = 0.5f
-        tvUpgradeCost.text = "تمام شد!"
+        tvUpgradeCost.text = "پایان یافت!"
 
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val previousBest = prefs.getInt("best_time", 9999)
@@ -332,14 +345,15 @@ class MainActivity : AppCompatActivity() {
         btnNeg.text = "منو"
         btnNeg.visibility = View.VISIBLE
 
-        // FIX CRASH: Stop timers, dismiss dialog, then close activity safely
+        // CRASH FIX: Safely remove all callbacks BEFORE dismissing or resetting
         btnPos.setOnClickListener { 
+            handler.removeCallbacksAndMessages(null)
             dialog.dismiss()
             resetGame() 
         }
         btnNeg.setOnClickListener { 
-            dialog.dismiss()
             handler.removeCallbacksAndMessages(null)
+            dialog.dismiss()
             finish() 
         }
 
@@ -350,11 +364,10 @@ class MainActivity : AppCompatActivity() {
         handler.removeCallbacksAndMessages(null)
         coins = 0L; currentItemIndex = 0; upgradeCost = 30L; baseTapValue = 1L
         isAdBoostActive = false; secondsElapsed = 0; isGameRunning = false; hasWon = false
-        tvTimer.text = "00:00"
+        tvTimer.text = "۰۰:۰۰"
         itemImage.setImageResource(items[0])
         btnGoldenDeal.visibility = View.GONE; btnBadCoin.visibility = View.GONE
         
-        // Re-enable Upgrade Button
         btnUpgrade.isEnabled = true
         btnUpgrade.alpha = 1f
         
@@ -362,18 +375,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun formatNumber(number: Long): String {
-        return when {
+        val formatted = when {
             number >= 1_000_000_000 -> String.format("%.1fB", number / 1_000_000_000.0)
             number >= 1_000_000 -> String.format("%.1fM", number / 1_000_000.0)
             number >= 1_000 -> String.format("%.1fK", number / 1_000.0)
             else -> number.toString()
         }
+        return toPersianDigits(formatted)
     }
 
     private fun updateUI() {
         tvCoinCount.text = formatNumber(coins)
         if (!hasWon) {
-            tvUpgradeCost.text = "Upgrade: ${formatNumber(upgradeCost)}"
+            tvUpgradeCost.text = "ارتقا: ${formatNumber(upgradeCost)}"
         }
         tvCoinCount.setTextColor(if (isAdBoostActive) 0xFFF4C430.toInt() else 0xFFF5E6D3.toInt())
     }
