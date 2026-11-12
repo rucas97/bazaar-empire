@@ -27,10 +27,11 @@ class LeaderboardAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val player = players[position]
-        holder.tvRank.text = (position + 1).toString()
         
-        holder.tvName.text = player.player_name
-        holder.tvId.text = "(${player.player_id})"
+        // Null safety for text
+        holder.tvRank.text = (position + 1).toString()
+        holder.tvName.text = player.player_name ?: "ناشناس"
+        holder.tvId.text = "(${player.player_id ?: "BX-0000"})"
 
         val timeStr = if (player.score == 9999) "--:--" else String.format(Locale.US, "%02d:%02d", player.score / 60, player.score % 60)
         holder.tvTime.text = timeStr

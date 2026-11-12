@@ -65,7 +65,6 @@ class MenuActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnSettings).setOnClickListener { showSettingsDialog() }
     }
 
-    // --- NATIVE INTERNET CHECK ---
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
@@ -153,34 +152,42 @@ class MenuActivity : AppCompatActivity() {
 
         val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
         val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        
+        if (recyclerView == null || progressBar == null) {
+            dialog.dismiss()
+            return
+        }
 
+        recyclerView.layoutManager = LinearLayoutManager(this)
         progressBar.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
 
-        dialog.findViewById<Button>(R.id.btnCloseLeaderboard).setOnClickListener { dialog.dismiss() }
+        dialog.findViewById<Button>(R.id.btnCloseLeaderboard)?.setOnClickListener { dialog.dismiss() }
         dialog.show()
 
         CoroutineScope(Dispatchers.IO).launch {
             val scores = SupabaseManager.fetchLeaderboard()
             
             withContext(Dispatchers.Main) {
-                progressBar.visibility = View.GONE
-                if (scores != null) {
-                    recyclerView.visibility = View.VISIBLE
-                    
-                    val distinctScores = scores.groupBy { it.user_id }.map { it.value.minByOrNull { entry -> entry.score }!! }
-                    val sortedPlayers = distinctScores.sortedBy { it.score }
-                    
-                    recyclerView.adapter = LeaderboardAdapter(sortedPlayers, playerName)
-                    
-                    val userIndex = sortedPlayers.indexOfFirst { it.player_name == playerName }
-                    if (userIndex != -1) {
-                        recyclerView.scrollToPosition(userIndex)
+                if (dialog.isShowing) {
+                    progressBar.visibility = View.GONE
+                    if (scores != null) {
+                        recyclerView.visibility = View.VISIBLE
+                        
+                        // CRASH FIX: mapNotNull instead of !!
+                        val distinctScores = scores.groupBy { it.user_id }.mapNotNull { it.value.minByOrNull { entry -> entry.score } }
+                        val sortedPlayers = distinctScores.sortedBy { it.score }
+                        
+                        recyclerView.adapter = LeaderboardAdapter(sortedPlayers, playerName)
+                        
+                        val userIndex = sortedPlayers.indexOfFirst { it.player_name == playerName }
+                        if (userIndex != -1) {
+                            recyclerView.scrollToPosition(userIndex)
+                        }
+                    } else {
+                        Toast.makeText(this@MenuActivity, "خطا در ارتباط با سرور", Toast.LENGTH_LONG).show()
+                        dialog.dismiss()
                     }
-                } else {
-                    Toast.makeText(this@MenuActivity, "خطا در ارتباط با سرور. کلیدهای سوپابیس چک شوند.", Toast.LENGTH_LONG).show()
-                    dialog.dismiss()
                 }
             }
         }
@@ -253,7 +260,7 @@ class MenuActivity : AppCompatActivity() {
             container.addView(rowView)
             i++ 
         }
-        dialog.findViewById<Button>(R.id.btnCloseShop).setOnClickListener { dialog.dismiss() }
+        dialog.findViewById<Button>(R.id.btnCloseShop)?.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 
@@ -306,8 +313,8 @@ class MenuActivity : AppCompatActivity() {
         dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "آموزش بازی"
         dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "۱. روی دکمه بزرگ ضربه بزنید تا سکه جمع کنید.\n۲. اجناس را ارتقا دهید تا به زعفران برسید.\n۳. مراقب سکه‌های نفرین شده باشید!\n۴. سکه‌های طلایی را سریع بزنید تا جایزه بگیرید."
         
-        dialog.findViewById<Button>(R.id.btnDialogNegative).visibility = View.GONE
-        dialog.findViewById<Button>(R.id.btnDialogPositive).apply { text = "متوجه شدم"; setOnClickListener { dialog.dismiss() } }
+        dialog.findViewById<Button>(R.id.btnDialogNegative)?.visibility = View.GONE
+        dialog.findViewById<Button>(R.id.btnDialogPositive)?.apply { text = "متوجه شدم"; setOnClickListener { dialog.dismiss() } }
         dialog.show()
     }
 

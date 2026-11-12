@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- TOP LEFT: AVATAR -->
+    <!-- TOP HUD -->
     <FrameLayout
         android:id="@+id/avatarFrame"
         android:layout_width="80dp"
@@ -36,7 +36,6 @@
             android:src="@drawable/avatar_default" />
     </FrameLayout>
 
-    <!-- TOP RIGHT: SCOREBOARD -->
     <ImageView
         android:id="@+id/scorePanel"
         android:layout_width="0dp"
@@ -67,7 +66,6 @@
         app:layout_constraintStart_toStartOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
-    <!-- BOTTOM LEFT: AD BUTTON -->
     <ImageButton
         android:id="@+id/btnAd"
         android:layout_width="160dp"
@@ -93,7 +91,6 @@
         app:layout_constraintStart_toStartOf="@+id/btnAd"
         app:layout_constraintEnd_toEndOf="@+id/btnAd" />
 
-    <!-- BOTTOM RIGHT: TIMER -->
     <TextView
         android:id="@+id/tvTimer"
         android:layout_width="130dp"
@@ -112,9 +109,9 @@
     <!-- CENTER ITEM -->
     <ImageView
         android:id="@+id/itemImage"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="24dp"
         android:adjustViewBounds="true"
         android:src="@drawable/item_tea"
         app:layout_constraintBottom_toTopOf="@+id/bottomButtonsLayout"
@@ -132,34 +129,33 @@
         app:layout_constraintStart_toStartOf="@+id/itemImage"
         app:layout_constraintTop_toTopOf="@+id/itemImage" />
 
-    <!-- BOTTOM BUTTONS (SIDE BY SIDE) -->
+    <!-- BOTTOM BUTTONS (Contained & Centered) -->
     <LinearLayout
         android:id="@+id/bottomButtonsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:layout_marginHorizontal="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- TAP BUTTON (LEFT) -->
+        <!-- TAP BUTTON (Contained to 130dp) -->
         <ImageButton
             android:id="@+id/btnTap"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
             android:src="@drawable/btn_tap" />
 
-        <!-- UPGRADE BUTTON (RIGHT) -->
+        <!-- UPGRADE BUTTON (Contained to 130dp) -->
         <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp">
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_marginStart="16dp">
 
             <ImageButton
                 android:id="@+id/btnUpgrade"
@@ -169,18 +165,23 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/btn_upgrade" />
 
+            <!-- Readable Text with Dark Pill Background -->
             <TextView
                 android:id="@+id/tvUpgradeCost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:background="#CC1A4A4A"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
                 android:text="ارتقا: ۳۰"
-                android:textColor="#F5E6D3"
-                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:shadowColor="#000"
-                android:shadowDx="1"
-                android:shadowDy="1" />
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="2" />
         </FrameLayout>
     </LinearLayout>
 
