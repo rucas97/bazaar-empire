@@ -15,6 +15,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import ir.tapsell.sdk.Tapsell
+import ir.tapsell.sdk.TapsellAdRequestListener
+import ir.tapsell.sdk.TapsellAdRequestOptions
+import ir.tapsell.sdk.TapsellShowOptions
 import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -102,6 +106,9 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch { SupabaseManager.ensureAnonymousLogin() }
 
+        // Initialize Tapsell with Live Key
+        Tapsell.initialize(applicationContext, "rfbsrihggfsbthnhssjsdimdjnimjerfqsfctqggtbchljcffhbqbkrsrtiskgiimgjhjr")
+
         initAudio()
         loadGameData()
         updateUI()
@@ -174,17 +181,55 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // REAL TAPSELL AD LOGIC
         btnAd.setOnClickListener {
             if (!isAdBoostActive) {
-                isAdBoostActive = true
-                Toast.makeText(this@MainActivity, "تبلیغات تستی: درآمد ۲ برابر برای ۳۰ ثانیه!", Toast.LENGTH_SHORT).show()
-                updateUI()
-                handler.postDelayed({
-                    isAdBoostActive = false
-                    updateUI()
-                }, 30000) 
+                showTapsellAd(
+                    onReward = {
+                        isAdBoostActive = true
+                        Toast.makeText(this@MainActivity, "درآمد ۲ برابر فعال شد!", Toast.LENGTH_SHORT).show()
+                        updateUI()
+                        handler.postDelayed({
+                            isAdBoostActive = false
+                            updateUI()
+                        }, 30000)
+                    },
+                    onFailure = {}
+                )
             }
         }
+    }
+
+    // Centralized Tapsell Ad Function
+    private fun showTapsellAd(onReward: () -> Unit, onFailure: () -> Unit) {
+        val adZoneId = "6af5ba9326195e2ec6800032"
+        Toast.makeText(this, "در حال آماده سازی تبلیغ...", Toast.LENGTH_SHORT).show()
+
+        Tapsell.requestAd(this, adZoneId, TapsellAdRequestOptions(), object : TapsellAdRequestListener {
+            override fun onAdAvailable(adId: String) {
+                Tapsell.showAd(MainActivity@this, adId, TapsellShowOptions(), object : ir.tapsell.sdk.TapsellAdShowListener {
+                    override fun onOpened() {}
+                    override fun onClosed() {}
+                    override fun onError(error: String) {}
+                    override fun onRewarded(reward: Boolean) {
+                        runOnUiThread {
+                            if (reward) {
+                                onReward()
+                            } else {
+                                onFailure()
+                            }
+                        }
+                    }
+                })
+            }
+
+            override fun onError(error: String) {
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "تبلیغی موجود نیست. لطفا بعدا تلاش کنید.", Toast.LENGTH_SHORT).show()
+                    onFailure()
+                }
+            }
+        })
     }
 
     override fun onBackPressed() {
@@ -305,8 +350,20 @@ class MainActivity : AppCompatActivity() {
         btnNeg.visibility = View.VISIBLE
 
         btnPos.setOnClickListener {
-            applyPenalty((penalty * 0.5).toLong())
-            dialog.dismiss(); resumeTimerIfNeeded()
+            dialog.dismiss()
+            // REAL TAPSELL AD FOR REDUCING PENALTY
+            showTapsellAd(
+                onReward = {
+                    applyPenalty((penalty * 0.5).toLong())
+                    Toast.makeText(this@MainActivity, "خسارت نصف شد!", Toast.LENGTH_SHORT).show()
+                    resumeTimerIfNeeded()
+                },
+                onFailure = {
+                    applyPenalty(penalty)
+                    Toast.makeText(this@MainActivity, "تبلیغ ناموفق بود. خسارت کامل اعمال شد.", Toast.LENGTH_SHORT).show()
+                    resumeTimerIfNeeded()
+                }
+            )
         }
         btnNeg.setOnClickListener {
             applyPenalty(penalty)
