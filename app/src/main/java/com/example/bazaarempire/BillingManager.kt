@@ -3,7 +3,7 @@ package com.example.bazaarempire
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import androidx.activity.result.ActivityResultRegistry
+import androidx.activity.ComponentActivity
 import ir.cafebazaar.poolakey.Connection
 import ir.cafebazaar.poolakey.ConnectionState
 import ir.cafebazaar.poolakey.Payment
@@ -52,8 +52,9 @@ class BillingManager(private val context: Context) {
         val request = PurchaseRequest(productId = productId, payload = "avatar_purchase")
         
         // Poolakey requires the ActivityResultRegistry to launch the Bazaar payment screen
+        // We cast the Activity to ComponentActivity to access this
         payment?.purchaseProduct(
-            registry = activity.activityResultRegistry,
+            registry = (activity as ComponentActivity).activityResultRegistry,
             request = request
         ) {
             purchaseFlowBegan {
@@ -64,8 +65,6 @@ class BillingManager(private val context: Context) {
             }
             purchaseSucceed { purchaseEntity ->
                 Log.d("BazaarBilling", "Purchase successful: ${purchaseEntity.productId}")
-                // Consume the product if it's a one-time item to allow repurchase
-                // (Skip consume if it's a non-consumable permanent avatar unlock)
                 onSuccess()
             }
             purchaseCanceled {
