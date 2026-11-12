@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlin.random.Random
 
 class MenuActivity : AppCompatActivity() {
@@ -17,6 +19,7 @@ class MenuActivity : AppCompatActivity() {
     private lateinit var tvPlayerName: TextView
     private lateinit var imgMenuAvatar: ImageView
     private lateinit var tvBestTime: TextView
+    private lateinit var billingManager: BillingManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +29,11 @@ class MenuActivity : AppCompatActivity() {
         tvPlayerName = findViewById(R.id.tvPlayerName)
         imgMenuAvatar = findViewById(R.id.imgMenuAvatar)
         tvBestTime = findViewById(R.id.tvBestTime)
+
+        billingManager = BillingManager(this)
+        billingManager.connect {
+            // Billing is ready. You can enable buy buttons here if needed.
+        }
 
         checkUserName()
         updateProfileUI()
@@ -58,6 +66,7 @@ class MenuActivity : AppCompatActivity() {
         super.onDestroy()
         bgmPlayer?.release()
         bgmPlayer = null 
+        billingManager.disconnect()
     }
 
     private fun updateBestTimeUI() {
@@ -120,7 +129,6 @@ class MenuActivity : AppCompatActivity() {
         }
     }
 
-    // --- DYNAMIC SHOP ---
     private fun showDynamicShopDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -137,7 +145,6 @@ class MenuActivity : AppCompatActivity() {
         while (true) {
             val resName = "avatar_$i"
             val resId = resources.getIdentifier(resName, "drawable", packageName)
-            
             if (resId == 0) break 
 
             val rowView = inflater.inflate(R.layout.item_shop_avatar, container, false)
@@ -146,7 +153,6 @@ class MenuActivity : AppCompatActivity() {
             val btnAction = rowView.findViewById<Button>(R.id.btnAction)
 
             img.setImageResource(resId)
-            
             val avatarNames = arrayOf("تاجر جوان", "استاد بازار", "تاجر ثروتمند")
             tvName.text = if (i <= avatarNames.size) avatarNames[i-1] else "آواتار شماره $i"
 
@@ -167,26 +173,29 @@ class MenuActivity : AppCompatActivity() {
             } else {
                 btnAction.text = "۱۰,۰۰۰ تومان"
                 btnAction.setOnClickListener {
-                    val newSet = purchasedAvatars.toMutableSet()
-                    newSet.add(resName)
-                    prefs.edit().putStringSet("purchased_avatars", newSet).apply()
-                    prefs.edit().putInt("active_avatar", resId).apply()
-                    Toast.makeText(this, "آواتار خریداری شد!", Toast.LENGTH_SHORT).show()
-                    updateProfileUI()
-                    dialog.dismiss()
-                    showDynamicShopDialog()
+                    // THIS IS WHERE BAZAAR BILLING HAPPENS
+                    // For testing, if you don't have the RSA key yet, it will log an error in Logcat.
+                    billingManager.purchaseItem(this, "avatar_$i") {
+                        // On success, save the purchase
+                        val newSet = purchasedAvatars.toMutableSet()
+                        newSet.add(resName)
+                        prefs.edit().putStringSet("purchased_avatars", newSet).apply()
+                        prefs.edit().putInt("active_avatar", resId).apply()
+                        
+                        Toast.makeText(this, "آواتار خریداری شد!", Toast.LENGTH_SHORT).show()
+                        updateProfileUI()
+                        dialog.dismiss()
+                        showDynamicShopDialog()
+                    }
                 }
             }
-
             container.addView(rowView)
             i++ 
         }
-
         dialog.findViewById<Button>(R.id.btnCloseShop).setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 
-    // --- LEADERBOARD LOGIC ---
     private fun showLeaderboardDialog() {
         val bestTime = prefs.getInt("best_time", 9999)
         val playerName = "حاج " + prefs.getString("user_name", "بازاری")
@@ -194,73 +203,23 @@ class MenuActivity : AppCompatActivity() {
         val players = mutableListOf<Pair<String, Int>>()
         val mockNames = arrayOf("علی", "رضا", "سارا", "محمد", "حسین", "زهرا", "مهدی", "فاطمه", "امیر", "نگار")
         for (i in 1..100) {
-            val randomTime = Random.nextInt(20, 300)
-            players.add("${mockNames.random()} ${i}" to randomTime)
+            players.add("${mockNames.random()} ${i}" to Random.nextInt(20, 300))
         }
-
-        val actualTime = if (bestTime == 9999) 9999 else bestTime
-        players.add(playerName to actualTime)
-
+        players.add(playerName to (if (bestTime == 9999) 9999 else bestTime))
+        
         val sortedPlayers = players.sortedBy { it.second }
 
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_custom)
+        dialog.setContentView(R.layout.dialog_leaderboard)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "نفرات برتر"
-        dialog.findViewById<Button>(R.id.btnDialogNegative).visibility = android.view.View.GONE
-        dialog.findViewById<Button>(R.id.btnDialogPositive).visibility = android.view.View.GONE
+        val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = LeaderboardAdapter(sortedPlayers, playerName)
 
-        val msgTv = dialog.findViewById<TextView>(R.id.tvDialogMessage)
-        val parentLayout = msgTv.parent as LinearLayout
-        parentLayout.removeView(msgTv)
-
-        val scrollView = ScrollView(this)
-        val listLayout = LinearLayout(this)
-        listLayout.orientation = LinearLayout.VERTICAL
-        
-        var userRank = 0
-
-        sortedPlayers.forEachIndexed { index, player ->
-            val rank = index + 1
-            val isCurrentUser = player.first == playerName
-            if (isCurrentUser) userRank = rank
-
-            val tv = TextView(this)
-            val timeStr = if (player.second == 9999) "--:--" else "${toPersianDigits(String.format("%02d", player.second / 60))}:${toPersianDigits(String.format("%02d", player.second % 60))}"
-            
-            tv.text = "$rank. ${player.first} - $timeStr"
-            tv.textSize = 16f
-            tv.setPadding(0, 16, 0, 16)
-            
-            if (isCurrentUser) {
-                tv.setTextColor(android.graphics.Color.parseColor("#F4C430"))
-                tv.setBackgroundColor(android.graphics.Color.parseColor("#33FFFFFF"))
-                tv.setTypeface(null, android.graphics.Typeface.BOLD)
-            } else {
-                tv.setTextColor(android.graphics.Color.parseColor("#F5E6D3"))
-            }
-            listLayout.addView(tv)
-        }
-
-        scrollView.addView(listLayout)
-        parentLayout.addView(scrollView, 1)
-
-        val closeBtn = Button(this)
-        closeBtn.text = "بستن"
-        closeBtn.setBackgroundColor(android.graphics.Color.parseColor("#C1653A"))
-        closeBtn.setTextColor(android.graphics.Color.WHITE)
-        parentLayout.addView(closeBtn)
-
-        closeBtn.setOnClickListener { dialog.dismiss() }
+        dialog.findViewById<Button>(R.id.btnCloseLeaderboard).setOnClickListener { dialog.dismiss() }
         dialog.show()
-
-        if (userRank > 0) {
-            scrollView.post {
-                scrollView.scrollTo(0, (userRank - 1) * 130)
-            }
-        }
     }
 
     private fun showSettingsDialog() {
