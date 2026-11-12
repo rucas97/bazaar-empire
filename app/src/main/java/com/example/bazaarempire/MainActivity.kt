@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var itemImage: ImageView
     private lateinit var ivSparkle: ImageView
     private lateinit var btnAd: ImageButton
-    private lateinit var btnShop: ImageButton
     private lateinit var btnGoldenDeal: ImageButton
     private lateinit var btnBadCoin: ImageButton
 
@@ -92,11 +91,13 @@ class MainActivity : AppCompatActivity() {
         itemImage = findViewById(R.id.itemImage)
         ivSparkle = findViewById(R.id.ivSparkle)
         btnAd = findViewById(R.id.btnAd)
-        btnShop = findViewById(R.id.btnShop)
         btnGoldenDeal = findViewById(R.id.btnGoldenDeal)
         btnBadCoin = findViewById(R.id.btnBadCoin)
 
         initAudio()
+        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
+        val activeAvatar = prefs.getInt("active_avatar", R.drawable.avatar_default)
+        findViewById<ImageView>(R.id.imgPlayerAvatar).setImageResource(activeAvatar)
         loadGameData()
         updateUI()
 
@@ -180,12 +181,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        btnShop.setOnClickListener {
             finishSafely()
         }
     }
 
     private fun initAudio() {
+        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
+        val activeAvatar = prefs.getInt("active_avatar", R.drawable.avatar_default)
+        findViewById<ImageView>(R.id.imgPlayerAvatar).setImageResource(activeAvatar)
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         isSoundEnabled = prefs.getBoolean("sound_enabled", true)
         volumeFloat = prefs.getInt("volume", 50) / 100f

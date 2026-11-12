@@ -16,6 +16,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Profile Header -->
+    <LinearLayout
+        android:id="@+id/profileHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imgMenuAvatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_shop"
+            android:padding="8dp"
+            android:src="@drawable/avatar_default" />
+
+        <TextView
+            android:id="@+id/tvPlayerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="حاج بازاری"
+            android:textColor="#F4C430"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:shadowColor="#000"
+            android:shadowDx="2"
+            android:shadowDy="2" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
@@ -33,7 +67,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Bigger, more exciting Cash Prize Banner -->
     <TextView
         android:id="@+id/tvPrizeBanner"
         android:layout_width="wrap_content"
