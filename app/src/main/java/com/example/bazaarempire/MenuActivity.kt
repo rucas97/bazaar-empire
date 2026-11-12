@@ -21,6 +21,7 @@ class MenuActivity : AppCompatActivity() {
     private lateinit var prefs: android.content.SharedPreferences
     private lateinit var tvPlayerName: TextView
     private lateinit var imgMenuAvatar: ImageView
+    private lateinit var tvBestTime: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +30,41 @@ class MenuActivity : AppCompatActivity() {
         prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         tvPlayerName = findViewById(R.id.tvPlayerName)
         imgMenuAvatar = findViewById(R.id.imgMenuAvatar)
+        tvBestTime = findViewById(R.id.tvBestTime)
 
         checkUserName()
         updateProfileUI()
 
+        findViewById<ImageButton>(R.id.btnPlay).setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+
+        findViewById<ImageButton>(R.id.btnTutorial).setOnClickListener { showTutorialDialog() }
+        findViewById<ImageButton>(R.id.btnLeaderboard).setOnClickListener { showLeaderboardDialog() }
+        findViewById<ImageButton>(R.id.btnShop).setOnClickListener { showShopDialog() }
+        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener { showSettingsDialog() }
+    }
+
+    override fun onResume() { 
+        super.onResume()
+        startMenuMusic()
+        updateProfileUI()
+        updateBestTimeUI() // Updates best time when returning from game
+    }
+    
+    override fun onPause() { 
+        super.onPause()
+        bgmPlayer?.pause() 
+    }
+    
+    override fun onDestroy() { 
+        super.onDestroy()
+        bgmPlayer?.release()
+        bgmPlayer = null 
+    }
+
+    private fun updateBestTimeUI() {
         val bestTime = prefs.getInt("best_time", 9999)
-        val tvBestTime = findViewById<TextView>(R.id.tvBestTime)
         if (bestTime != 9999) {
             val mins = toPersianDigits(String.format("%02d", bestTime / 60))
             val secs = toPersianDigits(String.format("%02d", bestTime % 60))
@@ -42,16 +72,6 @@ class MenuActivity : AppCompatActivity() {
         } else {
             tvBestTime.text = "بهترین زمان: --:--"
         }
-
-        findViewById<ImageButton>(R.id.btnPlay).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-            // Menu stays in background to prevent return crash
-        }
-
-        findViewById<ImageButton>(R.id.btnTutorial).setOnClickListener { showTutorialDialog() }
-        findViewById<ImageButton>(R.id.btnLeaderboard).setOnClickListener { showLeaderboardDialog(bestTime) }
-        findViewById<ImageButton>(R.id.btnShop).setOnClickListener { showShopDialog() }
-        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener { showSettingsDialog() }
     }
 
     private fun checkUserName() {
@@ -86,23 +106,6 @@ class MenuActivity : AppCompatActivity() {
         
         val avatarId = prefs.getInt("active_avatar", R.drawable.avatar_default)
         imgMenuAvatar.setImageResource(avatarId)
-    }
-
-    override fun onResume() { 
-        super.onResume()
-        startMenuMusic()
-        updateProfileUI() 
-    }
-    
-    override fun onPause() { 
-        super.onPause()
-        bgmPlayer?.pause() 
-    }
-    
-    override fun onDestroy() { 
-        super.onDestroy()
-        bgmPlayer?.release()
-        bgmPlayer = null 
     }
 
     private fun startMenuMusic() {
@@ -192,7 +195,8 @@ class MenuActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun showLeaderboardDialog(bestTime: Int) {
+    private fun showLeaderboardDialog() {
+        val bestTime = prefs.getInt("best_time", 9999)
         val userScore = if (bestTime != 9999) "${toPersianDigits(String.format("%02d", bestTime / 60))}:${toPersianDigits(String.format("%02d", bestTime % 60))}" else "--:--"
         
         val dialog = Dialog(this)
