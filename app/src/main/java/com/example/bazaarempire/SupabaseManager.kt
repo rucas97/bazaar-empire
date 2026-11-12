@@ -1,5 +1,6 @@
 package com.example.bazaarempire
 
+import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
@@ -10,17 +11,19 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LeaderboardEntry(
-    val player_id: String,       // NEW
+    val player_id: String,
     val player_name: String,
-    val contact_info: String,    // NEW
+    val contact_info: String,
     val score: Int,
     val user_id: String
 )
 
 object SupabaseManager {
-    // REPLACE THESE WITH YOUR ACTUAL KEYS FROM SUPABASE DASHBOARD
-    private const val SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co"
-    private const val SUPABASE_KEY = "YOUR_PUBLISHABLE_ANON_KEY"
+    // ==========================================
+    // PASTE YOUR SUPABASE URL AND KEY HERE:
+    // ==========================================
+    private const val SUPABASE_URL = "https://thowyglvcnplnothnrte.supabase.co/rest/v1/"
+    private const val SUPABASE_KEY = "sb_publishable_4lCy9HUyRfMH1DmLhGxOrQ_zaP_IEKj"
 
     val client: SupabaseClient = createSupabaseClient(
         supabaseUrl = SUPABASE_URL,
@@ -37,14 +40,20 @@ object SupabaseManager {
         if (client.auth.currentUserOrNull() == null) {
             try {
                 client.auth.signInAnonymously()
+                Log.d("SupabaseDebug", "Anonymous login SUCCESS")
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("SupabaseDebug", "Anonymous login FAILED: ${e.message}")
             }
         }
     }
 
     suspend fun submitScore(playerId: String, playerName: String, contactInfo: String, timeInSeconds: Int) {
-        val currentUser = client.auth.currentUserOrNull() ?: return
+        val currentUser = client.auth.currentUserOrNull()
+        if (currentUser == null) {
+            Log.e("SupabaseDebug", "Submit FAILED: User is null.")
+            return
+        }
+        
         val entry = LeaderboardEntry(
             player_id = playerId,
             player_name = playerName,
@@ -52,10 +61,12 @@ object SupabaseManager {
             score = timeInSeconds,
             user_id = currentUser.id
         )
+        
         try {
             client.postgrest["leaderboard"].insert(entry)
+            Log.d("SupabaseDebug", "Score SUBMITTED: $timeInSeconds")
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("SupabaseDebug", "Submit FAILED: ${e.message}")
         }
     }
 }
