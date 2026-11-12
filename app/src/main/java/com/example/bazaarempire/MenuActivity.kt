@@ -30,9 +30,10 @@ class MenuActivity : AppCompatActivity() {
         imgMenuAvatar = findViewById(R.id.imgMenuAvatar)
         tvBestTime = findViewById(R.id.tvBestTime)
 
+        // Initialize Billing
         billingManager = BillingManager(this)
         billingManager.connect {
-            // Billing is ready. You can enable buy buttons here if needed.
+            // Connection successful. You could show a "Store Ready" message here if you want.
         }
 
         checkUserName()
@@ -173,20 +174,25 @@ class MenuActivity : AppCompatActivity() {
             } else {
                 btnAction.text = "۱۰,۰۰۰ تومان"
                 btnAction.setOnClickListener {
-                    // THIS IS WHERE BAZAAR BILLING HAPPENS
-                    // For testing, if you don't have the RSA key yet, it will log an error in Logcat.
-                    billingManager.purchaseItem(this, "avatar_$i") {
-                        // On success, save the purchase
-                        val newSet = purchasedAvatars.toMutableSet()
-                        newSet.add(resName)
-                        prefs.edit().putStringSet("purchased_avatars", newSet).apply()
-                        prefs.edit().putInt("active_avatar", resId).apply()
-                        
-                        Toast.makeText(this, "آواتار خریداری شد!", Toast.LENGTH_SHORT).show()
-                        updateProfileUI()
-                        dialog.dismiss()
-                        showDynamicShopDialog()
-                    }
+                    // Connect the button to the BillingManager
+                    billingManager.purchaseItem(
+                        activity = this@MenuActivity,
+                        productId = "avatar_$i",
+                        onSuccess = {
+                            val newSet = purchasedAvatars.toMutableSet()
+                            newSet.add(resName)
+                            prefs.edit().putStringSet("purchased_avatars", newSet).apply()
+                            prefs.edit().putInt("active_avatar", resId).apply()
+                            
+                            Toast.makeText(this, "آواتار خریداری شد!", Toast.LENGTH_SHORT).show()
+                            updateProfileUI()
+                            dialog.dismiss()
+                            showDynamicShopDialog()
+                        },
+                        onFailure = { errorMsg ->
+                            Toast.makeText(this, "خطا در خرید: $errorMsg", Toast.LENGTH_LONG).show()
+                        }
+                    )
                 }
             }
             container.addView(rowView)
