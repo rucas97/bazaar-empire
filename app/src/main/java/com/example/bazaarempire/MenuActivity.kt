@@ -4,16 +4,11 @@ import android.app.Dialog
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Window
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.SeekBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import kotlin.random.Random
 
 class MenuActivity : AppCompatActivity() {
     
@@ -35,13 +30,15 @@ class MenuActivity : AppCompatActivity() {
         checkUserName()
         updateProfileUI()
 
+        findViewById<ImageView>(R.id.btnEditName).setOnClickListener { showEditNameDialog() }
+
         findViewById<ImageButton>(R.id.btnPlay).setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
         findViewById<ImageButton>(R.id.btnTutorial).setOnClickListener { showTutorialDialog() }
         findViewById<ImageButton>(R.id.btnLeaderboard).setOnClickListener { showLeaderboardDialog() }
-        findViewById<ImageButton>(R.id.btnShop).setOnClickListener { showShopDialog() }
+        findViewById<ImageButton>(R.id.btnShop).setOnClickListener { showDynamicShopDialog() }
         findViewById<ImageButton>(R.id.btnSettings).setOnClickListener { showSettingsDialog() }
     }
 
@@ -75,37 +72,40 @@ class MenuActivity : AppCompatActivity() {
     }
 
     private fun checkUserName() {
-        val userName = prefs.getString("user_name", null)
-        if (userName == null) {
-            val dialog = Dialog(this)
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(R.layout.dialog_username)
-            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.setCancelable(false)
-
-            val etName = dialog.findViewById<EditText>(R.id.etUsername)
-            val btnConfirm = dialog.findViewById<Button>(R.id.btnConfirmName)
-
-            btnConfirm.setOnClickListener {
-                val name = etName.text.toString().trim()
-                if (name.isNotEmpty()) {
-                    prefs.edit().putString("user_name", name).apply()
-                    updateProfileUI()
-                    dialog.dismiss()
-                } else {
-                    Toast.makeText(this, "نام نمی‌تواند خالی باشد", Toast.LENGTH_SHORT).show()
-                }
-            }
-            dialog.show()
+        if (prefs.getString("user_name", null) == null) {
+            showEditNameDialog(isFirstTime = true)
         }
+    }
+
+    private fun showEditNameDialog(isFirstTime: Boolean = false) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_username)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.setCancelable(!isFirstTime)
+
+        val etName = dialog.findViewById<EditText>(R.id.etUsername)
+        val btnConfirm = dialog.findViewById<Button>(R.id.btnConfirmName)
+
+        if (!isFirstTime) etName.setText(prefs.getString("user_name", ""))
+
+        btnConfirm.setOnClickListener {
+            val name = etName.text.toString().trim()
+            if (name.isNotEmpty()) {
+                prefs.edit().putString("user_name", name).apply()
+                updateProfileUI()
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, "نام نمی‌تواند خالی باشد", Toast.LENGTH_SHORT).show()
+            }
+        }
+        dialog.show()
     }
 
     private fun updateProfileUI() {
         val name = prefs.getString("user_name", "بازاری")
         tvPlayerName.text = "حاج $name"
-        
-        val avatarId = prefs.getInt("active_avatar", R.drawable.avatar_default)
-        imgMenuAvatar.setImageResource(avatarId)
+        imgMenuAvatar.setImageResource(prefs.getInt("active_avatar", R.drawable.avatar_default))
     }
 
     private fun startMenuMusic() {
@@ -120,33 +120,147 @@ class MenuActivity : AppCompatActivity() {
         }
     }
 
-    private fun showShopDialog() {
+    // --- DYNAMIC SHOP ---
+    private fun showDynamicShopDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_shop)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // TEMPORARY: Clicking the price button equips it visually for now.
-        // Later, this will be replaced with the Cafe Bazaar Poolakey SDK.
-        dialog.findViewById<Button>(R.id.btnBuy1).setOnClickListener { 
-            equipAvatar(R.drawable.avatar_1) 
-            Toast.makeText(this, "بعدا به درگاه پرداخت بازار وصل می‌شود", Toast.LENGTH_SHORT).show()
+        val container = dialog.findViewById<LinearLayout>(R.id.shopContainer)
+        val inflater = LayoutInflater.from(this)
+        
+        val purchasedAvatars = prefs.getStringSet("purchased_avatars", mutableSetOf()) ?: mutableSetOf()
+        val activeAvatarId = prefs.getInt("active_avatar", R.drawable.avatar_default)
+
+        var i = 1
+        while (true) {
+            val resName = "avatar_$i"
+            val resId = resources.getIdentifier(resName, "drawable", packageName)
+            
+            if (resId == 0) break 
+
+            val rowView = inflater.inflate(R.layout.item_shop_avatar, container, false)
+            val img = rowView.findViewById<ImageView>(R.id.imgAvatar)
+            val tvName = rowView.findViewById<TextView>(R.id.tvAvatarName)
+            val btnAction = rowView.findViewById<Button>(R.id.btnAction)
+
+            img.setImageResource(resId)
+            
+            val avatarNames = arrayOf("تاجر جوان", "استاد بازار", "تاجر ثروتمند")
+            tvName.text = if (i <= avatarNames.size) avatarNames[i-1] else "آواتار شماره $i"
+
+            if (purchasedAvatars.contains(resName)) {
+                if (activeAvatarId == resId) {
+                    btnAction.text = "فعال"
+                    btnAction.isEnabled = false
+                    btnAction.alpha = 0.5f
+                } else {
+                    btnAction.text = "استفاده"
+                    btnAction.setOnClickListener {
+                        prefs.edit().putInt("active_avatar", resId).apply()
+                        updateProfileUI()
+                        dialog.dismiss()
+                        showDynamicShopDialog()
+                    }
+                }
+            } else {
+                btnAction.text = "۱۰,۰۰۰ تومان"
+                btnAction.setOnClickListener {
+                    val newSet = purchasedAvatars.toMutableSet()
+                    newSet.add(resName)
+                    prefs.edit().putStringSet("purchased_avatars", newSet).apply()
+                    prefs.edit().putInt("active_avatar", resId).apply()
+                    Toast.makeText(this, "آواتار خریداری شد!", Toast.LENGTH_SHORT).show()
+                    updateProfileUI()
+                    dialog.dismiss()
+                    showDynamicShopDialog()
+                }
+            }
+
+            container.addView(rowView)
+            i++ 
         }
-        dialog.findViewById<Button>(R.id.btnBuy2).setOnClickListener { 
-            equipAvatar(R.drawable.avatar_2) 
-            Toast.makeText(this, "بعدا به درگاه پرداخت بازار وصل می‌شود", Toast.LENGTH_SHORT).show()
-        }
-        dialog.findViewById<Button>(R.id.btnBuy3).setOnClickListener { 
-            equipAvatar(R.drawable.avatar_3) 
-            Toast.makeText(this, "بعدا به درگاه پرداخت بازار وصل می‌شود", Toast.LENGTH_SHORT).show()
-        }
+
         dialog.findViewById<Button>(R.id.btnCloseShop).setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 
-    private fun equipAvatar(avatarResId: Int) {
-        prefs.edit().putInt("active_avatar", avatarResId).apply()
-        updateProfileUI()
+    // --- LEADERBOARD LOGIC ---
+    private fun showLeaderboardDialog() {
+        val bestTime = prefs.getInt("best_time", 9999)
+        val playerName = "حاج " + prefs.getString("user_name", "بازاری")
+        
+        val players = mutableListOf<Pair<String, Int>>()
+        val mockNames = arrayOf("علی", "رضا", "سارا", "محمد", "حسین", "زهرا", "مهدی", "فاطمه", "امیر", "نگار")
+        for (i in 1..100) {
+            val randomTime = Random.nextInt(20, 300)
+            players.add("${mockNames.random()} ${i}" to randomTime)
+        }
+
+        val actualTime = if (bestTime == 9999) 9999 else bestTime
+        players.add(playerName to actualTime)
+
+        val sortedPlayers = players.sortedBy { it.second }
+
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "نفرات برتر"
+        dialog.findViewById<Button>(R.id.btnDialogNegative).visibility = android.view.View.GONE
+        dialog.findViewById<Button>(R.id.btnDialogPositive).visibility = android.view.View.GONE
+
+        val msgTv = dialog.findViewById<TextView>(R.id.tvDialogMessage)
+        val parentLayout = msgTv.parent as LinearLayout
+        parentLayout.removeView(msgTv)
+
+        val scrollView = ScrollView(this)
+        val listLayout = LinearLayout(this)
+        listLayout.orientation = LinearLayout.VERTICAL
+        
+        var userRank = 0
+
+        sortedPlayers.forEachIndexed { index, player ->
+            val rank = index + 1
+            val isCurrentUser = player.first == playerName
+            if (isCurrentUser) userRank = rank
+
+            val tv = TextView(this)
+            val timeStr = if (player.second == 9999) "--:--" else "${toPersianDigits(String.format("%02d", player.second / 60))}:${toPersianDigits(String.format("%02d", player.second % 60))}"
+            
+            tv.text = "$rank. ${player.first} - $timeStr"
+            tv.textSize = 16f
+            tv.setPadding(0, 16, 0, 16)
+            
+            if (isCurrentUser) {
+                tv.setTextColor(android.graphics.Color.parseColor("#F4C430"))
+                tv.setBackgroundColor(android.graphics.Color.parseColor("#33FFFFFF"))
+                tv.setTypeface(null, android.graphics.Typeface.BOLD)
+            } else {
+                tv.setTextColor(android.graphics.Color.parseColor("#F5E6D3"))
+            }
+            listLayout.addView(tv)
+        }
+
+        scrollView.addView(listLayout)
+        parentLayout.addView(scrollView, 1)
+
+        val closeBtn = Button(this)
+        closeBtn.text = "بستن"
+        closeBtn.setBackgroundColor(android.graphics.Color.parseColor("#C1653A"))
+        closeBtn.setTextColor(android.graphics.Color.WHITE)
+        parentLayout.addView(closeBtn)
+
+        closeBtn.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+
+        if (userRank > 0) {
+            scrollView.post {
+                scrollView.scrollTo(0, (userRank - 1) * 130)
+            }
+        }
     }
 
     private fun showSettingsDialog() {
@@ -166,8 +280,7 @@ class MenuActivity : AppCompatActivity() {
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val vol = progress / 100f
-                bgmPlayer?.setVolume(vol, vol)
+                bgmPlayer?.setVolume(progress / 100f, progress / 100f)
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -196,33 +309,8 @@ class MenuActivity : AppCompatActivity() {
         dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "آموزش بازی"
         dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "۱. روی دکمه بزرگ ضربه بزنید تا سکه جمع کنید.\n۲. اجناس را ارتقا دهید تا به زعفران برسید.\n۳. مراقب سکه‌های نفرین شده باشید!\n۴. سکه‌های طلایی را سریع بزنید تا جایزه بگیرید."
         
-        val btnNeg = dialog.findViewById<Button>(R.id.btnDialogNegative)
-        btnNeg.visibility = android.view.View.GONE
-        
-        val btnPos = dialog.findViewById<Button>(R.id.btnDialogPositive)
-        btnPos.text = "متوجه شدم"
-        btnPos.setOnClickListener { dialog.dismiss() }
-        dialog.show()
-    }
-
-    private fun showLeaderboardDialog() {
-        val bestTime = prefs.getInt("best_time", 9999)
-        val userScore = if (bestTime != 9999) "${toPersianDigits(String.format("%02d", bestTime / 60))}:${toPersianDigits(String.format("%02d", bestTime % 60))}" else "--:--"
-        
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_custom)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        
-        dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "نفرات برتر"
-        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "۱. علی - ۰۰:۴۲\n۲. رضا - ۰۰:۵۱\n۳. سارا - ۰۱:۰۵\n\nرکورد شما: $userScore"
-        
-        val btnNeg = dialog.findViewById<Button>(R.id.btnDialogNegative)
-        btnNeg.visibility = android.view.View.GONE
-        
-        val btnPos = dialog.findViewById<Button>(R.id.btnDialogPositive)
-        btnPos.text = "بستن"
-        btnPos.setOnClickListener { dialog.dismiss() }
+        dialog.findViewById<Button>(R.id.btnDialogNegative).visibility = android.view.View.GONE
+        dialog.findViewById<Button>(R.id.btnDialogPositive).apply { text = "متوجه شدم"; setOnClickListener { dialog.dismiss() } }
         dialog.show()
     }
 

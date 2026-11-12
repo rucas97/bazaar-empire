@@ -182,6 +182,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (hasWon) {
+            finishSafely()
+            return
+        }
+        
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.setCancelable(false)
+
+        dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "توقف بازی"
+        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "آیا می‌خواهید بازی را ادامه دهید یا به منو برگردید؟"
+        
+        val btnPos = dialog.findViewById<Button>(R.id.btnDialogPositive)
+        val btnNeg = dialog.findViewById<Button>(R.id.btnDialogNegative)
+
+        btnPos.text = "ادامه"
+        btnNeg.text = "منو"
+        btnNeg.visibility = View.VISIBLE
+
+        btnPos.setOnClickListener { dialog.dismiss() }
+        btnNeg.setOnClickListener { 
+            dialog.dismiss()
+            finishSafely() 
+        }
+        dialog.show()
+    }
+
     private fun initAudio() {
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         isSoundEnabled = prefs.getBoolean("sound_enabled", true)
