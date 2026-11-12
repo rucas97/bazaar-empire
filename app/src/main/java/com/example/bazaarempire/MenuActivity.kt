@@ -91,7 +91,7 @@ class MenuActivity : AppCompatActivity() {
     private fun showShopDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_shop) // New Scrollable Shop
+        dialog.setContentView(R.layout.dialog_shop)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialog.findViewById<Button>(R.id.btnCloseShop).setOnClickListener {

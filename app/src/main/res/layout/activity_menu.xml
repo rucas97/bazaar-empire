@@ -33,13 +33,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Removed background box, added shadow for readability -->
     <TextView
         android:id="@+id/tvBestTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="#1A4A4A"
-        android:padding="8dp"
         android:text="Best Time: --:--"
         android:textColor="#F5E6D3"
         android:textSize="20sp"

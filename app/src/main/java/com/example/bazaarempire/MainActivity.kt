@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         btnGoldenDeal = findViewById(R.id.btnGoldenDeal)
         btnBadCoin = findViewById(R.id.btnBadCoin)
 
-        loadGameData() // Load saved data if it exists
+        loadGameData()
         updateUI()
 
         btnTap.setOnClickListener {
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         btnBadCoin.setOnClickListener {
             val fullPenalty = baseTapValue * 15
             btnBadCoin.visibility = View.GONE
-            resumeTimerIfNeeded()
+            pauseTimer() // Stop timer while popup is open
             
             badCoinClickCount++
             if (badCoinClickCount == 1 || badCoinClickCount % 3 == 0) {
@@ -114,6 +114,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 applyPenalty(fullPenalty)
                 Toast.makeText(this, "Cursed Coin! -$fullPenalty", Toast.LENGTH_SHORT).show()
+                resumeTimerIfNeeded()
             }
         }
 
@@ -149,18 +150,30 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnShop.setOnClickListener {
-            finish()
+            saveGameData()
+            finish() // Back to menu
         }
     }
 
     override fun onPause() {
         super.onPause()
-        saveGameData() // Saves game when you leave the screen
+        saveGameData()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacksAndMessages(null) // Kills timer to prevent crash
+        handler.removeCallbacksAndMessages(null) // Kill everything to prevent crash
+    }
+
+    private fun pauseTimer() {
+        handler.removeCallbacks(timerRunnable)
+    }
+
+    private fun resumeTimerIfNeeded() {
+        if (isGameRunning) {
+            handler.removeCallbacks(timerRunnable)
+            handler.post(timerRunnable)
+        }
     }
 
     private fun saveGameData() {
@@ -220,11 +233,13 @@ class MainActivity : AppCompatActivity() {
             applyPenalty((penalty * 0.5).toLong())
             Toast.makeText(this, "TEST AD: Damage reduced!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
+            resumeTimerIfNeeded()
         }
 
         btnNeg.setOnClickListener {
             applyPenalty(penalty)
             dialog.dismiss()
+            resumeTimerIfNeeded()
         }
 
         dialog.show()
@@ -247,7 +262,7 @@ class MainActivity : AppCompatActivity() {
             coinButton.animate().scaleX(1f).scaleY(1f).setDuration(50).start()
         }.start()
 
-        handler.removeCallbacks(timerRunnable)
+        pauseTimer() // Stop timer while coin is on screen
 
         val displayTime = if (coinButton == btnBadCoin) 1200L else 2500L
 
@@ -259,13 +274,6 @@ class MainActivity : AppCompatActivity() {
         }, displayTime)
     }
 
-    private fun resumeTimerIfNeeded() {
-        if (isGameRunning) {
-            handler.removeCallbacks(timerRunnable)
-            handler.post(timerRunnable)
-        }
-    }
-
     private fun playSparkleAnimation() {
         ivSparkle.visibility = View.VISIBLE
         ivSparkle.scaleX = 0.5f; ivSparkle.scaleY = 0.5f; ivSparkle.alpha = 1f
@@ -275,8 +283,8 @@ class MainActivity : AppCompatActivity() {
     private fun winGame() {
         isGameRunning = false
         hasWon = true
-        handler.removeCallbacks(timerRunnable)
-        clearSavedData() // Game finished, clear saved data
+        pauseTimer()
+        clearSavedData()
 
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val previousBest = prefs.getInt("best_time", 9999)
@@ -313,7 +321,7 @@ class MainActivity : AppCompatActivity() {
         btnNeg.text = "منو"
         btnNeg.visibility = View.VISIBLE
 
-        // Fix Crash: Dismiss dialog FIRST, then reset or finish
+        // CRASH FIX: Dismiss and finish safely
         btnPos.setOnClickListener { 
             dialog.dismiss()
             resetGame() 
@@ -327,6 +335,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetGame() {
+        handler.removeCallbacksAndMessages(null) // Clear all timers
         coins = 0L; currentItemIndex = 0; upgradeCost = 30L; baseTapValue = 1L
         isAdBoostActive = false; secondsElapsed = 0; isGameRunning = false; hasWon = false
         tvTimer.text = "00:00"

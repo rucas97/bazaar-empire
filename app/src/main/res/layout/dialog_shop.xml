@@ -5,7 +5,7 @@
     android:layout_width="340dp"
     android:layout_height="500dp"
     android:background="@drawable/panel_window"
-    android:padding="40dp">
+    android:padding="30dp">
 
     <TextView
         android:id="@+id/tvShopTitle"
@@ -22,7 +22,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Scrollable Area for Items -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -39,41 +38,126 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Placeholder Item 1 -->
-            <Button
+            <!-- Avatar 1 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="#1A4A4A"
-                android:text="آواتار ۱ - ۵۰۰ سکه"
-                android:textColor="#F5E6D3" />
+                android:layout_height="80dp"
+                android:layout_marginBottom="12dp"
+                android:background="#1A4A4A"
+                android:padding="8dp">
+                
+                <ImageView
+                    android:id="@+id/imgAvatar1"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/avatar_1"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="تاجر جوان"
+                    android:textColor="#F5E6D3"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imgAvatar1" />
+                
+                <Button
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:backgroundTint="#30B5A5"
+                    android:text="500"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Placeholder Item 2 -->
-            <Button
+            <!-- Avatar 2 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="#1A4A4A"
-                android:text="آواتار ۲ - ۱۰۰۰ سکه"
-                android:textColor="#F5E6D3" />
+                android:layout_height="80dp"
+                android:layout_marginBottom="12dp"
+                android:background="#1A4A4A"
+                android:padding="8dp">
                 
-            <!-- Placeholder Item 3 -->
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="#1A4A4A"
-                android:text="آواتار ۳ - ۲۰۰۰ سکه"
-                android:textColor="#F5E6D3" />
+                <ImageView
+                    android:id="@+id/imgAvatar2"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/avatar_2"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
                 
-             <!-- Placeholder Item 4 -->
-            <Button
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="استاد بازار"
+                    android:textColor="#F5E6D3"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imgAvatar2" />
+                
+                <Button
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:backgroundTint="#30B5A5"
+                    android:text="1000"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Avatar 3 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="#1A4A4A"
-                android:text="آواتار ۴ - ۵۰۰۰ سکه"
-                android:textColor="#F5E6D3" />
+                android:layout_height="80dp"
+                android:layout_marginBottom="12dp"
+                android:background="#1A4A4A"
+                android:padding="8dp">
+                
+                <ImageView
+                    android:id="@+id/imgAvatar3"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/avatar_3"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="تاجر ثروتمند"
+                    android:textColor="#F5E6D3"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imgAvatar3" />
+                
+                <Button
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:backgroundTint="#30B5A5"
+                    android:text="2000"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </LinearLayout>
     </ScrollView>
 
@@ -81,7 +165,7 @@
         android:id="@+id/btnCloseShop"
         android:layout_width="120dp"
         android:layout_height="50dp"
-        android:backgroundTint="#30B5A5"
+        android:backgroundTint="#C1653A"
         android:text="بستن"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
