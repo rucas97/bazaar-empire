@@ -1,6 +1,9 @@
 package com.example.bazaarempire
 
 import android.app.Dialog
+import android.media.AudioAttributes
+import android.media.MediaPlayer
+import android.media.SoundPool
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -39,9 +42,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnGoldenDeal: ImageButton
     private lateinit var btnBadCoin: ImageButton
 
+    // AUDIO
+    private var bgmPlayer: MediaPlayer? = null
+    private var soundPool: SoundPool? = null
+    private var sfxTapId = 0
+    private var sfxUpgradeId = 0
+    private var sfxBadId = 0
+    private var sfxWinId = 0
+    private var isSoundEnabled = true
+    private var volumeFloat = 0.5f
+
     private val handler = Handler(Looper.getMainLooper())
-    
-    // Saffron is now the final item
     private val items = listOf(
         R.drawable.item_tea, R.drawable.item_spices, R.drawable.item_pistachios,
         R.drawable.item_copper, R.drawable.item_carpet, R.drawable.item_saffron
@@ -85,17 +96,18 @@ class MainActivity : AppCompatActivity() {
         btnGoldenDeal = findViewById(R.id.btnGoldenDeal)
         btnBadCoin = findViewById(R.id.btnBadCoin)
 
+        initAudio()
         loadGameData()
         updateUI()
 
         btnTap.setOnClickListener {
             if (hasWon) return@setOnClickListener
-
             if (!isGameRunning) {
                 isGameRunning = true
                 handler.post(timerRunnable)
             }
 
+            playSound(sfxTapId)
             coins += if (isAdBoostActive) baseTapValue * 2 else baseTapValue
             updateUI()
             
@@ -111,6 +123,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnGoldenDeal.setOnClickListener {
+            playSound(sfxUpgradeId)
             val bonus = baseTapValue * 10
             coins += bonus
             updateUI()
@@ -120,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnBadCoin.setOnClickListener {
+            playSound(sfxBadId)
             val fullPenalty = baseTapValue * 15
             btnBadCoin.visibility = View.GONE
             pauseTimer()
@@ -136,8 +150,8 @@ class MainActivity : AppCompatActivity() {
 
         btnUpgrade.setOnClickListener {
             if (hasWon) return@setOnClickListener
-
             if (coins >= upgradeCost) {
+                playSound(sfxUpgradeId)
                 coins -= upgradeCost
                 upgradeCost = (upgradeCost * 1.5).toLong() 
                 baseTapValue += 3
@@ -146,10 +160,7 @@ class MainActivity : AppCompatActivity() {
                     currentItemIndex++
                     itemImage.setImageResource(items[currentItemIndex])
                     playSparkleAnimation()
-
-                    if (currentItemIndex == items.size - 1) {
-                        winGame()
-                    }
+                    if (currentItemIndex == items.size - 1) winGame()
                 }
                 updateUI()
             } else {
@@ -170,20 +181,67 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnShop.setOnClickListener {
-            handler.removeCallbacksAndMessages(null)
-            saveGameData()
-            finish()
+            finishSafely()
+        }
+    }
+
+    private fun initAudio() {
+        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
+        isSoundEnabled = prefs.getBoolean("sound_enabled", true)
+        volumeFloat = prefs.getInt("volume", 50) / 100f
+        
+        if (prefs.getBoolean("music_enabled", true)) {
+            bgmPlayer = MediaPlayer.create(this, R.raw.bgm)
+            bgmPlayer?.isLooping = true
+            bgmPlayer?.setVolume(volumeFloat, volumeFloat)
+            bgmPlayer?.start()
+        }
+
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_GAME)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+        soundPool = SoundPool.Builder().setMaxStreams(5).setAudioAttributes(audioAttributes).build()
+        sfxTapId = soundPool?.load(this, R.raw.sfx_tap, 1) ?: 0
+        sfxUpgradeId = soundPool?.load(this, R.raw.sfx_upgrade, 1) ?: 0
+        sfxBadId = soundPool?.load(this, R.raw.sfx_bad, 1) ?: 0
+        sfxWinId = soundPool?.load(this, R.raw.sfx_win, 1) ?: 0
+    }
+
+    private fun playSound(soundId: Int) {
+        if (isSoundEnabled && soundId != 0) {
+            soundPool?.play(soundId, volumeFloat, volumeFloat, 1, 0, 1f)
         }
     }
 
     override fun onPause() {
         super.onPause()
+        bgmPlayer?.pause()
         saveGameData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
+        if (prefs.getBoolean("music_enabled", true) && bgmPlayer != null) {
+            bgmPlayer?.start()
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
+        bgmPlayer?.release()
+        bgmPlayer = null
+        soundPool?.release()
+        soundPool = null
+    }
+
+    private fun finishSafely() {
+        handler.removeCallbacksAndMessages(null)
+        bgmPlayer?.pause()
+        saveGameData()
+        finish()
     }
 
     private fun pauseTimer() { handler.removeCallbacks(timerRunnable) }
@@ -305,6 +363,7 @@ class MainActivity : AppCompatActivity() {
         isGameRunning = false
         hasWon = true
         pauseTimer()
+        playSound(sfxWinId)
         clearSavedData()
 
         btnUpgrade.isEnabled = false
@@ -347,14 +406,12 @@ class MainActivity : AppCompatActivity() {
         btnNeg.visibility = View.VISIBLE
 
         btnPos.setOnClickListener { 
-            handler.removeCallbacksAndMessages(null)
             dialog.dismiss()
             resetGame() 
         }
         btnNeg.setOnClickListener { 
-            handler.removeCallbacksAndMessages(null)
             dialog.dismiss()
-            finish() 
+            finishSafely() // Use the new safe exit function
         }
 
         dialog.show()
