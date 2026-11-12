@@ -18,11 +18,12 @@ data class LeaderboardEntry(
 )
 
 object SupabaseManager {
-    private const val SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co"
-    private const val SUPABASE_KEY = "YOUR_PUBLISHABLE_ANON_KEY"
+    // YOU MUST REPLACE THESE WITH YOUR ACTUAL KEYS FROM SUPABASE.COM
+    private const val SUPABASE_URL = "https://thowyglvcnplnothnrte.supabase.co"
+    private const val SUPABASE_KEY = "sb_publishable_4lCy9HUyRfMH1DmLhGxOrQ_zaP_IEKj"
 
-    // Initialize safely
     var client: SupabaseClient? = null
+    
     init {
         try {
             client = createSupabaseClient(supabaseUrl = SUPABASE_URL, supabaseKey = SUPABASE_KEY) {
@@ -42,11 +43,15 @@ object SupabaseManager {
         } catch (e: Exception) { e.printStackTrace() }
     }
 
-    suspend fun submitScore(playerId: String, playerName: String, contactInfo: String, timeInSeconds: Int) {
-        try {
-            val currentUser = client?.auth?.currentUserOrNull() ?: return
+    // Changed to return a String so we can show it on screen
+    suspend fun submitScore(playerId: String, playerName: String, contactInfo: String, timeInSeconds: Int): String {
+        return try {
+            val currentUser = client?.auth?.currentUserOrNull() ?: return "Error: Not logged in (Check Keys)"
             val entry = LeaderboardEntry(playerId, playerName, contactInfo, timeInSeconds, currentUser.id)
             client?.postgrest?.get("leaderboard")?.insert(entry)
-        } catch (e: Exception) { e.printStackTrace() }
+            "Success: Score Sent!"
+        } catch (e: Exception) { 
+            "Supabase Error: ${e.message}" 
+        }
     }
 }
