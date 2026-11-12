@@ -101,7 +101,10 @@ class MainActivity : AppCompatActivity() {
         val activeAvatar = prefs.getInt("active_avatar", R.drawable.avatar_default)
         findViewById<ImageView>(R.id.imgPlayerAvatar).setImageResource(activeAvatar)
 
-        CoroutineScope(Dispatchers.IO).launch { SupabaseManager.ensureAnonymousLogin() }
+        CoroutineScope(Dispatchers.IO).launch {
+            val loginResult = SupabaseManager.ensureAnonymousLogin()
+            withContext(Dispatchers.Main) { Toast.makeText(this@MainActivity, loginResult, Toast.LENGTH_LONG).show() }
+        }
 
         initAudio()
         loadGameData()

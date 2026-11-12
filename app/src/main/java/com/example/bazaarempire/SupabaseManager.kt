@@ -18,8 +18,8 @@ data class LeaderboardEntry(
 )
 
 object SupabaseManager {
-    // YOU MUST REPLACE THESE WITH YOUR ACTUAL KEYS FROM SUPABASE.COM
-    private const val SUPABASE_URL = "https://thowyglvcnplnothnrte.supabase.co"
+    // HARDCODED WITH YOUR URL (Base URL only, no /rest/v1/)
+    private const val SUPABASE_URL = "https://thowyglvcnplnothnrte.supabase.co" 
     private const val SUPABASE_KEY = "sb_publishable_4lCy9HUyRfMH1DmLhGxOrQ_zaP_IEKj"
 
     var client: SupabaseClient? = null
@@ -27,7 +27,10 @@ object SupabaseManager {
     init {
         try {
             client = createSupabaseClient(supabaseUrl = SUPABASE_URL, supabaseKey = SUPABASE_KEY) {
-                install(Auth) { autoLoadFromStorage = true; alwaysAutoRefresh = true }
+                install(Auth) { 
+                    autoLoadFromStorage = true
+                    alwaysAutoRefresh = true 
+                }
                 install(Postgrest)
             }
         } catch (e: Exception) {
@@ -35,18 +38,20 @@ object SupabaseManager {
         }
     }
 
-    suspend fun ensureAnonymousLogin() {
-        try {
+    suspend fun ensureAnonymousLogin(): String {
+        return try {
             if (client?.auth?.currentUserOrNull() == null) {
                 client?.auth?.signInAnonymously()
             }
-        } catch (e: Exception) { e.printStackTrace() }
+            "Success: Logged in anonymously"
+        } catch (e: Exception) { 
+            "Login Error: ${e.message}" 
+        }
     }
 
-    // Changed to return a String so we can show it on screen
     suspend fun submitScore(playerId: String, playerName: String, contactInfo: String, timeInSeconds: Int): String {
         return try {
-            val currentUser = client?.auth?.currentUserOrNull() ?: return "Error: Not logged in (Check Keys)"
+            val currentUser = client?.auth?.currentUserOrNull() ?: return "Error: Still not logged in"
             val entry = LeaderboardEntry(playerId, playerName, contactInfo, timeInSeconds, currentUser.id)
             client?.postgrest?.get("leaderboard")?.insert(entry)
             "Success: Score Sent!"
