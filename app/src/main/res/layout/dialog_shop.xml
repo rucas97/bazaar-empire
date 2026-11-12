@@ -3,174 +3,165 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="340dp"
-    android:layout_height="500dp"
+    android:layout_height="520dp"
     android:background="@drawable/panel_window"
-    android:padding="30dp">
+    android:padding="40dp">
 
-    <TextView
-        android:id="@+id/tvShopTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="فروشگاه"
-        android:textColor="#F4C430"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:shadowColor="#000"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@+id/tvShopTitle"
-        app:layout_constraintBottom_toTopOf="@+id/btnCloseShop"
+        android:background="@drawable/bg_dialog_inner"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="فروشگاه"
+            android:textColor="#F4C430"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center" />
 
-            <!-- Avatar 1 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="12dp"
+            android:scrollbars="none">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginBottom="12dp"
-                android:background="#1A4A4A"
-                android:padding="8dp">
-                
-                <ImageView
-                    android:id="@+id/imgAvatar1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/avatar_1"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-                
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="تاجر جوان"
-                    android:textColor="#F5E6D3"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imgAvatar1" />
-                
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="40dp"
-                    android:backgroundTint="#30B5A5"
-                    android:text="500"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <!-- Avatar 2 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginBottom="12dp"
-                android:background="#1A4A4A"
-                android:padding="8dp">
-                
-                <ImageView
-                    android:id="@+id/imgAvatar2"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/avatar_2"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-                
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="استاد بازار"
-                    android:textColor="#F5E6D3"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imgAvatar2" />
-                
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="40dp"
-                    android:backgroundTint="#30B5A5"
-                    android:text="1000"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- Avatar 1 -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#1A4A4A"
+                    android:padding="8dp">
+                    <ImageView
+                        android:id="@+id/imgAvatar1"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/avatar_1"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="تاجر جوان"
+                        android:textColor="#F5E6D3"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imgAvatar1" />
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:backgroundTint="#30B5A5"
+                        android:text="500"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Avatar 3 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginBottom="12dp"
-                android:background="#1A4A4A"
-                android:padding="8dp">
-                
-                <ImageView
-                    android:id="@+id/imgAvatar3"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/avatar_3"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-                
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="تاجر ثروتمند"
-                    android:textColor="#F5E6D3"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imgAvatar3" />
-                
-                <Button
-                    android:layout_width="80dp"
-                    android:layout_height="40dp"
-                    android:backgroundTint="#30B5A5"
-                    android:text="2000"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- Avatar 2 -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#1A4A4A"
+                    android:padding="8dp">
+                    <ImageView
+                        android:id="@+id/imgAvatar2"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/avatar_2"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="استاد بازار"
+                        android:textColor="#F5E6D3"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imgAvatar2" />
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:backgroundTint="#30B5A5"
+                        android:text="1000"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </LinearLayout>
-    </ScrollView>
+                <!-- Avatar 3 -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#1A4A4A"
+                    android:padding="8dp">
+                    <ImageView
+                        android:id="@+id/imgAvatar3"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/avatar_3"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="تاجر ثروتمند"
+                        android:textColor="#F5E6D3"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imgAvatar3" />
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:backgroundTint="#30B5A5"
+                        android:text="2000"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/btnCloseShop"
-        android:layout_width="120dp"
-        android:layout_height="50dp"
-        android:backgroundTint="#C1653A"
-        android:text="بستن"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            </LinearLayout>
+        </ScrollView>
 
+        <Button
+            android:id="@+id/btnCloseShop"
+            android:layout_width="120dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#C1653A"
+            android:text="بستن"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

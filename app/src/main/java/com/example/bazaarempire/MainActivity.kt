@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val items = listOf(
         R.drawable.item_tea, R.drawable.item_spices, R.drawable.item_pistachios,
-        R.drawable.item_copper, R.drawable.item_saffron, R.drawable.item_carpet
+        R.drawable.item_copper, R.drawable.item_carpet, R.drawable.item_saffron
     )
 
     private val timerRunnable = object : Runnable {
@@ -75,7 +75,9 @@ class MainActivity : AppCompatActivity() {
         updateUI()
 
         btnTap.setOnClickListener {
-            if (!isGameRunning && !hasWon) {
+            if (hasWon) return@setOnClickListener // Block tapping after win
+
+            if (!isGameRunning) {
                 isGameRunning = true
                 handler.post(timerRunnable)
             }
@@ -106,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         btnBadCoin.setOnClickListener {
             val fullPenalty = baseTapValue * 15
             btnBadCoin.visibility = View.GONE
-            pauseTimer() // Stop timer while popup is open
+            pauseTimer()
             
             badCoinClickCount++
             if (badCoinClickCount == 1 || badCoinClickCount % 3 == 0) {
@@ -119,6 +121,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnUpgrade.setOnClickListener {
+            if (hasWon) return@setOnClickListener // Block upgrades after win
+
             if (coins >= upgradeCost) {
                 coins -= upgradeCost
                 upgradeCost = (upgradeCost * 1.5).toLong() 
@@ -129,7 +133,10 @@ class MainActivity : AppCompatActivity() {
                     itemImage.setImageResource(items[currentItemIndex])
                     playSparkleAnimation()
 
-                    if (currentItemIndex == items.size - 1) winGame()
+                    // Triggers Win state exactly when Carpet is unlocked
+                    if (currentItemIndex == items.size - 1) {
+                        winGame()
+                    }
                 }
                 updateUI()
             } else {
@@ -150,8 +157,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnShop.setOnClickListener {
+            // Safely exit
+            handler.removeCallbacksAndMessages(null)
             saveGameData()
-            finish() // Back to menu
+            finish()
         }
     }
 
@@ -162,21 +171,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacksAndMessages(null) // Kill everything to prevent crash
+        handler.removeCallbacksAndMessages(null)
     }
 
-    private fun pauseTimer() {
-        handler.removeCallbacks(timerRunnable)
-    }
-
+    private fun pauseTimer() { handler.removeCallbacks(timerRunnable) }
+    
     private fun resumeTimerIfNeeded() {
-        if (isGameRunning) {
+        if (isGameRunning && !hasWon) {
             handler.removeCallbacks(timerRunnable)
             handler.post(timerRunnable)
         }
     }
 
     private fun saveGameData() {
+        if (hasWon) return // Don't save if game is over
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         prefs.edit().apply {
             putLong("saved_coins", coins)
@@ -201,9 +209,7 @@ class MainActivity : AppCompatActivity() {
         tvTimer.text = String.format("%02d:%02d", secondsElapsed / 60, secondsElapsed % 60)
         itemImage.setImageResource(items[currentItemIndex])
         
-        if (isGameRunning) {
-            handler.post(timerRunnable)
-        }
+        if (isGameRunning) handler.post(timerRunnable)
     }
 
     private fun clearSavedData() {
@@ -262,7 +268,7 @@ class MainActivity : AppCompatActivity() {
             coinButton.animate().scaleX(1f).scaleY(1f).setDuration(50).start()
         }.start()
 
-        pauseTimer() // Stop timer while coin is on screen
+        pauseTimer()
 
         val displayTime = if (coinButton == btnBadCoin) 1200L else 2500L
 
@@ -285,6 +291,11 @@ class MainActivity : AppCompatActivity() {
         hasWon = true
         pauseTimer()
         clearSavedData()
+
+        // Disable Upgrade Button visually
+        btnUpgrade.isEnabled = false
+        btnUpgrade.alpha = 0.5f
+        tvUpgradeCost.text = "تمام شد!"
 
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val previousBest = prefs.getInt("best_time", 9999)
@@ -321,13 +332,14 @@ class MainActivity : AppCompatActivity() {
         btnNeg.text = "منو"
         btnNeg.visibility = View.VISIBLE
 
-        // CRASH FIX: Dismiss and finish safely
+        // FIX CRASH: Stop timers, dismiss dialog, then close activity safely
         btnPos.setOnClickListener { 
             dialog.dismiss()
             resetGame() 
         }
         btnNeg.setOnClickListener { 
             dialog.dismiss()
+            handler.removeCallbacksAndMessages(null)
             finish() 
         }
 
@@ -335,12 +347,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetGame() {
-        handler.removeCallbacksAndMessages(null) // Clear all timers
+        handler.removeCallbacksAndMessages(null)
         coins = 0L; currentItemIndex = 0; upgradeCost = 30L; baseTapValue = 1L
         isAdBoostActive = false; secondsElapsed = 0; isGameRunning = false; hasWon = false
         tvTimer.text = "00:00"
         itemImage.setImageResource(items[0])
         btnGoldenDeal.visibility = View.GONE; btnBadCoin.visibility = View.GONE
+        
+        // Re-enable Upgrade Button
+        btnUpgrade.isEnabled = true
+        btnUpgrade.alpha = 1f
+        
         updateUI()
     }
 
@@ -355,7 +372,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI() {
         tvCoinCount.text = formatNumber(coins)
-        tvUpgradeCost.text = "Upgrade: ${formatNumber(upgradeCost)}"
+        if (!hasWon) {
+            tvUpgradeCost.text = "Upgrade: ${formatNumber(upgradeCost)}"
+        }
         tvCoinCount.setTextColor(if (isAdBoostActive) 0xFFF4C430.toInt() else 0xFFF5E6D3.toInt())
     }
 }
