@@ -59,8 +59,7 @@ class MenuActivity : AppCompatActivity() {
 
     private fun generateUniqueIdIfNeeded() {
         if (!prefs.contains("unique_id")) {
-            val randomNum = Random.nextInt(1000, 9999)
-            val uniqueId = "BX-$randomNum"
+            val uniqueId = "BX-${Random.nextInt(1000, 9999)}"
             prefs.edit().putString("unique_id", uniqueId).apply()
         }
     }
@@ -115,30 +114,29 @@ class MenuActivity : AppCompatActivity() {
     }
 
     private fun updateProfileUI() {
-        tvPlayerName.text = "حاج ${prefs.getString("user_name", "بازاری")}"
-        tvPlayerId.text = prefs.getString("unique_id", "BX-0000")
+        tvPlayerName.text = "حاج ${prefs.getString("user_name", "بازاری") ?: "بازاری"}"
+        tvPlayerId.text = prefs.getString("unique_id", "BX-0000") ?: "BX-0000"
         
         val editIcon = findViewById<ImageView>(R.id.btnEditName)
         if (prefs.getBoolean("name_changed", false)) {
-            editIcon.alpha = 0.3f // Gray out if changed
+            editIcon.alpha = 0.3f
         }
 
         imgMenuAvatar.setImageResource(prefs.getInt("active_avatar", R.drawable.avatar_default))
     }
 
-    // ... [startMenuMusic and showDynamicShopDialog remain the same as previous step] ...
-    // For brevity, I am omitting them here, but they are below in the final full file.
-
     private fun showLeaderboardDialog() {
         val bestTime = prefs.getInt("best_time", 9999)
-        val playerName = "حاج " + prefs.getString("user_name", "بازاری")
-        val playerId = prefs.getString("unique_id", "")
+        val playerName = "حاج " + (prefs.getString("user_name", "بازاری") ?: "بازاری")
+        val playerId = prefs.getString("unique_id", "BX-0000") ?: "BX-0000"
         
         val players = mutableListOf<Triple<String, String, Int>>()
         val mockNames = arrayOf("علی", "رضا", "سارا", "محمد", "حسین")
         for (i in 1..100) {
             players.add(Triple("BX-${Random.nextInt(1000, 9999)}", "${mockNames.random()} ${i}", Random.nextInt(20, 300)))
         }
+        
+        // FIXED: Nullable safety applied here
         players.add(Triple(playerId, playerName, (if (bestTime == 9999) 9999 else bestTime)))
         
         val sortedPlayers = players.sortedBy { it.third }
@@ -156,6 +154,77 @@ class MenuActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun showDynamicShopDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_shop)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val container = dialog.findViewById<LinearLayout>(R.id.shopContainer)
+        val inflater = LayoutInflater.from(this)
+        
+        val purchasedAvatars = prefs.getStringSet("purchased_avatars", mutableSetOf()) ?: mutableSetOf()
+        val activeAvatarId = prefs.getInt("active_avatar", R.drawable.avatar_default)
+
+        var i = 1
+        while (true) {
+            val resName = "avatar_$i"
+            val resId = resources.getIdentifier(resName, "drawable", packageName)
+            if (resId == 0) break 
+
+            val rowView = inflater.inflate(R.layout.item_shop_avatar, container, false)
+            val img = rowView.findViewById<ImageView>(R.id.imgAvatar)
+            val tvName = rowView.findViewById<TextView>(R.id.tvAvatarName)
+            val btnAction = rowView.findViewById<Button>(R.id.btnAction)
+
+            img.setImageResource(resId)
+            val avatarNames = arrayOf("تاجر جوان", "استاد بازار", "تاجر ثروتمند")
+            tvName.text = if (i <= avatarNames.size) avatarNames[i-1] else "آواتار شماره $i"
+
+            if (purchasedAvatars.contains(resName)) {
+                if (activeAvatarId == resId) {
+                    btnAction.text = "فعال"
+                    btnAction.isEnabled = false
+                    btnAction.alpha = 0.5f
+                } else {
+                    btnAction.text = "استفاده"
+                    btnAction.setOnClickListener {
+                        prefs.edit().putInt("active_avatar", resId).apply()
+                        updateProfileUI()
+                        dialog.dismiss()
+                        showDynamicShopDialog()
+                    }
+                }
+            } else {
+                btnAction.text = "۱۰,۰۰۰ تومان"
+                btnAction.setOnClickListener {
+                    billingManager.purchaseItem(
+                        activity = this@MenuActivity,
+                        productId = "avatar_$i",
+                        onSuccess = {
+                            val newSet = purchasedAvatars.toMutableSet()
+                            newSet.add(resName)
+                            prefs.edit().putStringSet("purchased_avatars", newSet).apply()
+                            prefs.edit().putInt("active_avatar", resId).apply()
+                            
+                            Toast.makeText(this, "آواتار خریداری شد!", Toast.LENGTH_SHORT).show()
+                            updateProfileUI()
+                            dialog.dismiss()
+                            showDynamicShopDialog()
+                        },
+                        onFailure = { errorMsg ->
+                            Toast.makeText(this, "خطا در خرید: $errorMsg", Toast.LENGTH_LONG).show()
+                        }
+                    )
+                }
+            }
+            container.addView(rowView)
+            i++ 
+        }
+        dialog.findViewById<Button>(R.id.btnCloseShop).setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
+
     private fun showSettingsDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -165,7 +234,7 @@ class MenuActivity : AppCompatActivity() {
         val cbMusic = dialog.findViewById<CheckBox>(R.id.cbMusic)
         val cbSound = dialog.findViewById<CheckBox>(R.id.cbSound)
         val seekBar = dialog.findViewById<SeekBar>(R.id.seekBarVolume)
-        val etContact = dialog.findViewById<EditText>(R.id.etContactInfo) // NEW
+        val etContact = dialog.findViewById<EditText>(R.id.etContactInfo)
         val btnSave = dialog.findViewById<Button>(R.id.btnSaveSettings)
 
         cbMusic.isChecked = prefs.getBoolean("music_enabled", true)
@@ -190,14 +259,26 @@ class MenuActivity : AppCompatActivity() {
             prefs.edit().putBoolean("music_enabled", cbMusic.isChecked).apply()
             prefs.edit().putBoolean("sound_enabled", cbSound.isChecked).apply()
             prefs.edit().putInt("volume", seekBar.progress).apply()
-            prefs.edit().putString("contact_info", etContact.text.toString().trim()).apply() // NEW
+            prefs.edit().putString("contact_info", etContact.text.toString().trim()).apply()
             dialog.dismiss()
         }
         dialog.show()
     }
 
-    // ... [showTutorialDialog and toPersianDigits remain the same] ...
-    
+    private fun showTutorialDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        
+        dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "آموزش بازی"
+        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "۱. روی دکمه بزرگ ضربه بزنید تا سکه جمع کنید.\n۲. اجناس را ارتقا دهید تا به زعفران برسید.\n۳. مراقب سکه‌های نفرین شده باشید!\n۴. سکه‌های طلایی را سریع بزنید تا جایزه بگیرید."
+        
+        dialog.findViewById<Button>(R.id.btnDialogNegative).visibility = android.view.View.GONE
+        dialog.findViewById<Button>(R.id.btnDialogPositive).apply { text = "متوجه شدم"; setOnClickListener { dialog.dismiss() } }
+        dialog.show()
+    }
+
     private fun startMenuMusic() {
         if (prefs.getBoolean("music_enabled", true)) {
             if (bgmPlayer == null) { bgmPlayer = MediaPlayer.create(this, R.raw.bgm); bgmPlayer?.isLooping = true }
@@ -207,8 +288,6 @@ class MenuActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDynamicShopDialog() { /* (Keep previous code) */ }
-    private fun showTutorialDialog() { /* (Keep previous code) */ }
     private fun toPersianDigits(number: String): String {
         var result = number
         val en = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
