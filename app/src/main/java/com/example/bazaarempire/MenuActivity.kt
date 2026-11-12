@@ -138,58 +138,64 @@ class MenuActivity : AppCompatActivity() {
     }
 
     private fun showLeaderboardDialog() {
-        if (!isNetworkAvailable()) {
-            Toast.makeText(this, "لطفا به اینترنت متصل شوید", Toast.LENGTH_LONG).show()
-            return
-        }
+        try {
+            if (!isNetworkAvailable()) {
+                Toast.makeText(this, "لطفا به اینترنت متصل شوید", Toast.LENGTH_LONG).show()
+                return
+            }
 
-        val playerName = "حاج " + (prefs.getString("user_name", "بازاری") ?: "بازاری")
-        
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_leaderboard)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
-        val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
-        
-        if (recyclerView == null || progressBar == null) {
-            dialog.dismiss()
-            return
-        }
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        progressBar.visibility = View.VISIBLE
-        recyclerView.visibility = View.GONE
-
-        dialog.findViewById<Button>(R.id.btnCloseLeaderboard)?.setOnClickListener { dialog.dismiss() }
-        dialog.show()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val scores = SupabaseManager.fetchLeaderboard()
+            val playerName = "حاج " + (prefs.getString("user_name", "بازاری") ?: "بازاری")
             
-            withContext(Dispatchers.Main) {
-                if (dialog.isShowing) {
-                    progressBar.visibility = View.GONE
-                    if (scores != null) {
-                        recyclerView.visibility = View.VISIBLE
-                        
-                        // CRASH FIX: mapNotNull instead of !!
-                        val distinctScores = scores.groupBy { it.user_id }.mapNotNull { it.value.minByOrNull { entry -> entry.score } }
-                        val sortedPlayers = distinctScores.sortedBy { it.score }
-                        
-                        recyclerView.adapter = LeaderboardAdapter(sortedPlayers, playerName)
-                        
-                        val userIndex = sortedPlayers.indexOfFirst { it.player_name == playerName }
-                        if (userIndex != -1) {
-                            recyclerView.scrollToPosition(userIndex)
+            val dialog = Dialog(this)
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.dialog_leaderboard)
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+            val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
+            val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
+            
+            if (recyclerView == null || progressBar == null) {
+                dialog.dismiss()
+                Toast.makeText(this, "خطای داخلی رابط کاربری", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            progressBar.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+
+            dialog.findViewById<Button>(R.id.btnCloseLeaderboard)?.setOnClickListener { dialog.dismiss() }
+            dialog.show()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val scores = SupabaseManager.fetchLeaderboard()
+                
+                withContext(Dispatchers.Main) {
+                    if (dialog.isShowing) {
+                        progressBar.visibility = View.GONE
+                        if (scores != null) {
+                            recyclerView.visibility = View.VISIBLE
+                            
+                            // Group by user_id and get the minimum score (fastest time)
+                            val distinctScores = scores.groupBy { it.user_id }.mapNotNull { it.value.minByOrNull { entry -> entry.score } }
+                            val sortedPlayers = distinctScores.sortedBy { it.score }
+                            
+                            recyclerView.adapter = LeaderboardAdapter(sortedPlayers, playerName)
+                            
+                            val userIndex = sortedPlayers.indexOfFirst { it.player_name == playerName }
+                            if (userIndex != -1) {
+                                recyclerView.scrollToPosition(userIndex)
+                            }
+                        } else {
+                            Toast.makeText(this@MenuActivity, "خطا در ارتباط با سرور (کلیدها یا جدول را چک کنید)", Toast.LENGTH_LONG).show()
+                            dialog.dismiss()
                         }
-                    } else {
-                        Toast.makeText(this@MenuActivity, "خطا در ارتباط با سرور", Toast.LENGTH_LONG).show()
-                        dialog.dismiss()
                     }
                 }
             }
+        } catch (e: Exception) {
+            Toast.makeText(this, "خطای غیرمنتظره: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace()
         }
     }
 
