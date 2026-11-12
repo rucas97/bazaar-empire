@@ -199,17 +199,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // CORRECTED: Added () to abstract class listeners (TapsellAdRequestListener() and TapsellAdShowListener())
     private fun showTapsellAd(onReward: () -> Unit, onFailure: () -> Unit) {
         val adZoneId = "6af5ba9326195e2ec6800032"
         Toast.makeText(this, "در حال آماده سازی تبلیغ...", Toast.LENGTH_SHORT).show()
 
-        Tapsell.requestAd(this, adZoneId, TapsellAdRequestOptions(), object : TapsellAdRequestListener {
+        Tapsell.requestAd(this, adZoneId, TapsellAdRequestOptions(), object : TapsellAdRequestListener() {
             override fun onAdAvailable(adId: String) {
-                // FIX: Instantiate showOptions into a variable first
                 val showOptions = TapsellShowOptions()
                 
-                // FIX: Use this@MainActivity instead of MainActivity@this
-                Tapsell.showAd(this@MainActivity, adZoneId, adId, showOptions, object : TapsellAdShowListener {
+                Tapsell.showAd(this@MainActivity, adZoneId, adId, showOptions, object : TapsellAdShowListener() {
                     override fun onOpened() {}
                     override fun onClosed() {}
                     override fun onError(message: String?) {}
