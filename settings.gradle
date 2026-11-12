@@ -13,6 +13,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url "https://maven.tapsell.ir" } // Tapsell Maven Repository
+        maven { url "https://dl.bintray.com/tapsellorg/maven" } // Legacy fallback
     }
 }
 rootProject.name = "BazaarEmpire"
