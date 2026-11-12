@@ -15,10 +15,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -84,10 +84,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        
-        CoroutineScope(Dispatchers.IO).launch {
-            SupabaseManager.ensureAnonymousLogin()
-        }
 
         tvCoinCount = findViewById(R.id.tvCoinCount)
         tvUpgradeCost = findViewById(R.id.tvUpgradeCost)
@@ -103,6 +99,8 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val activeAvatar = prefs.getInt("active_avatar", R.drawable.avatar_default)
         findViewById<ImageView>(R.id.imgPlayerAvatar).setImageResource(activeAvatar)
+
+        CoroutineScope(Dispatchers.IO).launch { SupabaseManager.ensureAnonymousLogin() }
 
         initAudio()
         loadGameData()
@@ -190,10 +188,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (hasWon) {
-            finishSafely()
-            return
-        }
+        if (hasWon) { finishSafely(); return }
         
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -212,10 +207,7 @@ class MainActivity : AppCompatActivity() {
         btnNeg.visibility = View.VISIBLE
 
         btnPos.setOnClickListener { dialog.dismiss() }
-        btnNeg.setOnClickListener { 
-            dialog.dismiss()
-            finishSafely() 
-        }
+        btnNeg.setOnClickListener { dialog.dismiss(); finishSafely() }
         dialog.show()
     }
 
@@ -231,10 +223,7 @@ class MainActivity : AppCompatActivity() {
             bgmPlayer?.start()
         }
 
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_GAME)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build()
+        val audioAttributes = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
         soundPool = SoundPool.Builder().setMaxStreams(5).setAudioAttributes(audioAttributes).build()
         sfxTapId = soundPool?.load(this, R.raw.sfx_tap, 1) ?: 0
         sfxUpgradeId = soundPool?.load(this, R.raw.sfx_upgrade, 1) ?: 0
@@ -243,32 +232,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playSound(soundId: Int) {
-        if (isSoundEnabled && soundId != 0) {
-            soundPool?.play(soundId, volumeFloat, volumeFloat, 1, 0, 1f)
-        }
+        if (isSoundEnabled && soundId != 0) soundPool?.play(soundId, volumeFloat, volumeFloat, 1, 0, 1f)
     }
 
-    override fun onPause() {
-        super.onPause()
-        bgmPlayer?.pause()
-        saveGameData()
-    }
-
-    override fun onResume() {
+    override fun onPause() { super.onPause(); bgmPlayer?.pause(); saveGameData() }
+    override fun onResume() { 
         super.onResume()
-        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
-        if (prefs.getBoolean("music_enabled", true) && bgmPlayer != null) {
-            bgmPlayer?.start()
-        }
+        if (getSharedPreferences("BazaarPrefs", MODE_PRIVATE).getBoolean("music_enabled", true) && bgmPlayer != null) bgmPlayer?.start()
     }
-
-    override fun onDestroy() {
+    override fun onDestroy() { 
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
-        bgmPlayer?.release()
-        bgmPlayer = null
-        soundPool?.release()
-        soundPool = null
+        bgmPlayer?.release(); bgmPlayer = null
+        soundPool?.release(); soundPool = null
     }
 
     private fun finishSafely() {
@@ -278,18 +254,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun pauseTimer() { handler.removeCallbacks(timerRunnable) }
-    
-    private fun resumeTimerIfNeeded() {
-        if (isGameRunning && !hasWon) {
-            handler.removeCallbacks(timerRunnable)
-            handler.post(timerRunnable)
-        }
-    }
+    private fun resumeTimerIfNeeded() { if (isGameRunning && !hasWon) { handler.removeCallbacks(timerRunnable); handler.post(timerRunnable) } }
 
     private fun saveGameData() {
         if (hasWon) return 
-        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
-        prefs.edit().apply {
+        getSharedPreferences("BazaarPrefs", MODE_PRIVATE).edit().apply {
             putLong("saved_coins", coins)
             putInt("saved_item_index", currentItemIndex)
             putLong("saved_upgrade_cost", upgradeCost)
@@ -309,18 +278,14 @@ class MainActivity : AppCompatActivity() {
         secondsElapsed = prefs.getInt("saved_time", 0)
         isGameRunning = prefs.getBoolean("saved_game_running", false)
         
-        val mins = toPersianDigits(String.format("%02d", secondsElapsed / 60))
-        val secs = toPersianDigits(String.format("%02d", secondsElapsed % 60))
-        tvTimer.text = "$mins:$secs"
+        tvTimer.text = "${toPersianDigits(String.format("%02d", secondsElapsed / 60))}:${toPersianDigits(String.format("%02d", secondsElapsed % 60))}"
         itemImage.setImageResource(items[currentItemIndex])
         
         if (isGameRunning) handler.post(timerRunnable)
     }
 
     private fun clearSavedData() {
-        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
-        prefs.edit().remove("saved_coins").remove("saved_item_index").remove("saved_upgrade_cost")
-            .remove("saved_tap_value").remove("saved_time").remove("saved_game_running").apply()
+        getSharedPreferences("BazaarPrefs", MODE_PRIVATE).edit().remove("saved_coins").remove("saved_item_index").remove("saved_upgrade_cost").remove("saved_tap_value").remove("saved_time").remove("saved_game_running").apply()
     }
 
     private fun showBadCoinDialog(penalty: Long) {
@@ -331,29 +296,22 @@ class MainActivity : AppCompatActivity() {
         dialog.setCancelable(false)
 
         dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "سکه نفرین شده!"
-        val penaltyFa = toPersianDigits(penalty.toString())
-        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "شما $penaltyFa سکه از دست می‌دهید.\nآیا می‌خواهید با تماشای تبلیغات خسارت را نصف کنید؟"
+        dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "شما ${toPersianDigits(penalty.toString())} سکه از دست می‌دهید.\nآیا می‌خواهید با تماشای تبلیغات خسارت را نصف کنید؟"
         
         val btnPos = dialog.findViewById<Button>(R.id.btnDialogPositive)
         val btnNeg = dialog.findViewById<Button>(R.id.btnDialogNegative)
-
         btnPos.text = "تبلیغات"
         btnNeg.text = "قبول خسارت"
         btnNeg.visibility = View.VISIBLE
 
         btnPos.setOnClickListener {
             applyPenalty((penalty * 0.5).toLong())
-            Toast.makeText(this, "تبلیغات تستی: خسارت نصف شد!", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-            resumeTimerIfNeeded()
+            dialog.dismiss(); resumeTimerIfNeeded()
         }
-
         btnNeg.setOnClickListener {
             applyPenalty(penalty)
-            dialog.dismiss()
-            resumeTimerIfNeeded()
+            dialog.dismiss(); resumeTimerIfNeeded()
         }
-
         dialog.show()
     }
 
@@ -367,22 +325,15 @@ class MainActivity : AppCompatActivity() {
         coinButton.visibility = View.VISIBLE
         coinButton.x = Random.nextInt(50, 800).toFloat()
         coinButton.y = Random.nextInt(300, 1200).toFloat()
-
-        coinButton.scaleX = 0f
-        coinButton.scaleY = 0f
+        coinButton.scaleX = 0f; coinButton.scaleY = 0f
         coinButton.animate().scaleX(1.1f).scaleY(1.1f).setDuration(150).withEndAction {
             coinButton.animate().scaleX(1f).scaleY(1f).setDuration(50).start()
         }.start()
 
         pauseTimer()
-
         val displayTime = if (coinButton == btnBadCoin) 1200L else 2500L
-
         handler.postDelayed({
-            if (coinButton.visibility == View.VISIBLE) {
-                coinButton.visibility = View.GONE
-                resumeTimerIfNeeded()
-            }
+            if (coinButton.visibility == View.VISIBLE) { coinButton.visibility = View.GONE; resumeTimerIfNeeded() }
         }, displayTime)
     }
 
@@ -393,41 +344,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun winGame() {
-        isGameRunning = false
-        hasWon = true
-        pauseTimer()
-        playSound(sfxWinId)
-        clearSavedData()
+        isGameRunning = false; hasWon = true; pauseTimer(); playSound(sfxWinId); clearSavedData()
 
-        btnUpgrade.isEnabled = false
-        btnUpgrade.alpha = 0.5f
-        tvUpgradeCost.text = "پایان یافت!"
+        btnUpgrade.isEnabled = false; btnUpgrade.alpha = 0.5f; tvUpgradeCost.text = "پایان یافت!"
 
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val previousBest = prefs.getInt("best_time", 9999)
         var isNewRecord = false
+        if (secondsElapsed < previousBest) { prefs.edit().putInt("best_time", secondsElapsed).apply(); isNewRecord = true }
 
-        if (secondsElapsed < previousBest) {
-            prefs.edit().putInt("best_time", secondsElapsed).apply()
-            isNewRecord = true
-        }
-
-        val rank = when {
-            secondsElapsed < 45 -> "افسانه بازار"
-            secondsElapsed < 90 -> "تاجر بزرگ"
-            secondsElapsed < 150 -> "تاجر ماهر"
-            else -> "تازه‌کار"
-        }
-
+        val rank = when { secondsElapsed < 45 -> "افسانه بازار"; secondsElapsed < 90 -> "تاجر بزرگ"; secondsElapsed < 150 -> "تاجر ماهر"; else -> "تازه‌کار" }
         val recordText = if (isNewRecord) "\n\n🌟 رکورد جدید! 🌟" else ""
         val message = "زمان: ${tvTimer.text}\nرتبه: $rank$recordText"
 
-        // Submit score to Supabase
-        val playerName = getSharedPreferences("BazaarPrefs", MODE_PRIVATE).getString("user_name", "بازاری") ?: "بازاری"
         CoroutineScope(Dispatchers.IO).launch {
             SupabaseManager.submitScore(
                 prefs.getString("unique_id", "BX-0000") ?: "BX-0000",
-                playerName,
+                prefs.getString("user_name", "بازاری") ?: "بازاری",
                 prefs.getString("contact_info", "NONE") ?: "NONE",
                 secondsElapsed
             )
@@ -441,23 +374,12 @@ class MainActivity : AppCompatActivity() {
 
         dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "پیروزی!"
         dialog.findViewById<TextView>(R.id.tvDialogMessage).text = message
-        
         val btnPos = dialog.findViewById<Button>(R.id.btnDialogPositive)
         val btnNeg = dialog.findViewById<Button>(R.id.btnDialogNegative)
+        btnPos.text = "بازی مجدد"; btnNeg.text = "منو"; btnNeg.visibility = View.VISIBLE
 
-        btnPos.text = "بازی مجدد"
-        btnNeg.text = "منو"
-        btnNeg.visibility = View.VISIBLE
-
-        btnPos.setOnClickListener { 
-            dialog.dismiss()
-            resetGame() 
-        }
-        btnNeg.setOnClickListener { 
-            dialog.dismiss()
-            finishSafely() 
-        }
-
+        btnPos.setOnClickListener { dialog.dismiss(); resetGame() }
+        btnNeg.setOnClickListener { dialog.dismiss(); finishSafely() }
         dialog.show()
     }
 
@@ -465,13 +387,9 @@ class MainActivity : AppCompatActivity() {
         handler.removeCallbacksAndMessages(null)
         coins = 0L; currentItemIndex = 0; upgradeCost = 30L; baseTapValue = 1L
         isAdBoostActive = false; secondsElapsed = 0; isGameRunning = false; hasWon = false
-        tvTimer.text = "۰۰:۰۰"
-        itemImage.setImageResource(items[0])
+        tvTimer.text = "۰۰:۰۰"; itemImage.setImageResource(items[0])
         btnGoldenDeal.visibility = View.GONE; btnBadCoin.visibility = View.GONE
-        
-        btnUpgrade.isEnabled = true
-        btnUpgrade.alpha = 1f
-        
+        btnUpgrade.isEnabled = true; btnUpgrade.alpha = 1f
         updateUI()
     }
 
@@ -487,9 +405,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI() {
         tvCoinCount.text = formatNumber(coins)
-        if (!hasWon) {
-            tvUpgradeCost.text = "ارتقا: ${formatNumber(upgradeCost)}"
-        }
+        if (!hasWon) tvUpgradeCost.text = "ارتقا: ${formatNumber(upgradeCost)}"
         tvCoinCount.setTextColor(if (isAdBoostActive) 0xFFF4C430.toInt() else 0xFFF5E6D3.toInt())
     }
 }

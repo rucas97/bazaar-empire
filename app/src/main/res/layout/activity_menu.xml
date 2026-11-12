@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Profile Header with Curved Background -->
+    <!-- PROFILE HEADER -->
     <LinearLayout
         android:id="@+id/profileHeader"
         android:layout_width="wrap_content"
@@ -31,17 +31,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Avatar Frame -->
         <FrameLayout
             android:layout_width="64dp"
             android:layout_height="64dp">
-            
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/btn_shop"
                 android:scaleType="fitCenter" />
-
             <ImageView
                 android:id="@+id/imgMenuAvatar"
                 android:layout_width="match_parent"
@@ -51,26 +48,39 @@
                 android:src="@drawable/avatar_default" />
         </FrameLayout>
 
-        <!-- Name and Edit Icon -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:orientation="vertical"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp">
 
-            <TextView
-                android:id="@+id/tvPlayerName"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="حاج بازاری"
-                android:textColor="#F4C430"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:shadowColor="#000"
-                android:shadowDx="2"
-                android:shadowDy="2" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                
+                <TextView
+                    android:id="@+id/tvPlayerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="حاج بازاری"
+                    android:textColor="#F4C430"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:shadowColor="#000"
+                    android:shadowDx="2"
+                    android:shadowDy="2" />
+
+                <ImageView
+                    android:id="@+id/btnEditName"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="6dp"
+                    android:src="@drawable/icon_edit"
+                    app:tint="#F4C430" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvPlayerId"
@@ -79,16 +89,6 @@
                 android:text="BX-0000"
                 android:textColor="#A0A0A0"
                 android:textSize="12sp" />
-        </LinearLayout>
-
-            <ImageView
-                android:id="@+id/btnEditName"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/icon_edit"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="#F4C430" />
         </LinearLayout>
     </LinearLayout>
 

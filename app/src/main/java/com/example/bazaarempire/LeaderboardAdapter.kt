@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.Locale
 
 class LeaderboardAdapter(
-    private val players: List<Triple<String, String, Int>>, // ID, Name, Score
+    private val players: List<Triple<String, String, Int>>,
     private val currentPlayerName: String
 ) : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>() {
 
@@ -27,8 +27,6 @@ class LeaderboardAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val player = players[position]
         holder.tvRank.text = (position + 1).toString()
-        
-        // Show ID under Name
         holder.tvName.text = "${player.second}\n(${player.first})" 
 
         val timeStr = if (player.third == 9999) "--:--" else String.format(Locale.US, "%02d:%02d", player.third / 60, player.third % 60)
