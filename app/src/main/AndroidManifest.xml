@@ -6,9 +6,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="امپراطوری بازار"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/AppTheme"> <!-- Font applied here -->
         
-        <!-- Splash is now the launcher -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"

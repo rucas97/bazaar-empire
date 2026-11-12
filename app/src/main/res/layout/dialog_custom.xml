@@ -5,15 +5,15 @@
     android:layout_width="340dp"
     android:layout_height="wrap_content"
     android:background="@drawable/panel_window"
-    android:padding="40dp"> <!-- Huge padding to keep text away from gold corners -->
+    android:padding="40dp">
 
     <TextView
         android:id="@+id/tvDialogTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Title"
         android:textColor="#F4C430"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:shadowColor="#000"
         android:shadowDx="2"
@@ -25,21 +25,21 @@
 
     <TextView
         android:id="@+id/tvDialogMessage"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Message goes here"
         android:textColor="#F5E6D3"
-        android:textSize="16sp"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/tvDialogTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Positive Button (Green/Teal) -->
     <Button
         android:id="@+id/btnDialogPositive"
-        android:layout_width="120dp"
+        android:layout_width="110dp"
         android:layout_height="50dp"
         android:layout_marginTop="24dp"
         android:backgroundTint="#30B5A5"
@@ -50,10 +50,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnDialogNegative" />
 
-    <!-- Negative Button (Red/Terracotta) -->
     <Button
         android:id="@+id/btnDialogNegative"
-        android:layout_width="120dp"
+        android:layout_width="110dp"
         android:layout_height="50dp"
         android:layout_marginTop="24dp"
         android:backgroundTint="#C1653A"

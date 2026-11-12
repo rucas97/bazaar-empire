@@ -17,10 +17,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Score Panel (Slightly smaller) -->
     <ImageView
         android:id="@+id/scorePanel"
-        android:layout_width="360dp"
-        android:layout_height="90dp"
+        android:layout_width="280dp"
+        android:layout_height="70dp"
         android:layout_marginTop="16dp"
         android:scaleType="fitCenter" 
         android:src="@drawable/panel_score"
@@ -28,13 +29,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Coin Text (Reduced size) -->
     <TextView
         android:id="@+id/tvCoinCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0"
         android:textColor="#F5E6D3"
-        android:textSize="32sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:shadowColor="#000"
         android:shadowDx="2"
@@ -45,6 +47,7 @@
         app:layout_constraintStart_toStartOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
+    <!-- Timer -->
     <TextView
         android:id="@+id/tvTimer"
         android:layout_width="wrap_content"
@@ -55,34 +58,38 @@
         android:paddingVertical="4dp"
         android:text="00:00"
         android:textColor="#F4C430"
-        android:textSize="24sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/scorePanel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Shop button (Aligned neatly) -->
     <ImageButton
         android:id="@+id/btnShop"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         android:src="@drawable/btn_shop"
-        app:layout_constraintTop_toBottomOf="@+id/tvTimer"
+        app:layout_constraintTop_toBottomOf="@+id/scorePanel"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Ad button (Aligned neatly) -->
     <ImageButton
         android:id="@+id/btnAd"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
+        android:layout_width="120dp"
+        android:layout_height="45dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         android:src="@drawable/btn_ad"
-        app:layout_constraintTop_toBottomOf="@+id/tvTimer"
+        app:layout_constraintTop_toBottomOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
@@ -92,7 +99,7 @@
         android:textColor="#F5E6D3"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:paddingStart="40dp" 
+        android:paddingStart="35dp" 
         app:layout_constraintTop_toTopOf="@+id/btnAd"
         app:layout_constraintBottom_toBottomOf="@+id/btnAd"
         app:layout_constraintStart_toStartOf="@+id/btnAd"
@@ -103,6 +110,7 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginBottom="16dp"
+        android:adjustViewBounds="true"
         android:src="@drawable/item_tea"
         app:layout_constraintBottom_toTopOf="@+id/btnTap"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,6 +127,7 @@
         app:layout_constraintStart_toStartOf="@+id/itemImage"
         app:layout_constraintTop_toTopOf="@+id/itemImage" />
 
+    <!-- Play/Tap button (Added adjustViewBounds for sharpness) -->
     <ImageButton
         android:id="@+id/btnTap"
         android:layout_width="160dp"
@@ -126,6 +135,7 @@
         android:layout_marginBottom="24dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         android:src="@drawable/btn_tap"
         app:layout_constraintBottom_toTopOf="@+id/btnUpgrade"
         app:layout_constraintStart_toStartOf="parent"
@@ -133,22 +143,22 @@
 
     <ImageButton
         android:id="@+id/btnUpgrade"
-        android:layout_width="320dp"
-        android:layout_height="80dp"
+        android:layout_width="300dp"
+        android:layout_height="75dp"
         android:layout_marginBottom="24dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         android:src="@drawable/btn_upgrade"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Shifted text up so it doesn't overlap the coin -->
     <TextView
         android:id="@+id/tvUpgradeCost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upgrade: 10"
+        android:text="Upgrade: 30"
         android:textColor="#F5E6D3"
         android:textSize="16sp"
         android:textStyle="bold"

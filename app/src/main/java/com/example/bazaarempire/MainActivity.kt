@@ -18,9 +18,11 @@ class MainActivity : AppCompatActivity() {
 
     private var coins = 0L
     private var currentItemIndex = 0
-    private var upgradeCost = 10L
+    private var upgradeCost = 30L // Starts at 30 now
     private var baseTapValue = 1L
     private var isAdBoostActive = false
+    
+    private var badCoinClickCount = 0 // Tracks how many times cursed coin is clicked
 
     private var secondsElapsed = 0
     private var isGameRunning = false
@@ -105,14 +107,22 @@ class MainActivity : AppCompatActivity() {
             val fullPenalty = baseTapValue * 15
             btnBadCoin.visibility = View.GONE
             resumeTimerIfNeeded()
-            showBadCoinDialog(fullPenalty)
+            
+            badCoinClickCount++
+            // Only show ad prompt on the 1st click, and every 3rd click after
+            if (badCoinClickCount == 1 || badCoinClickCount % 3 == 0) {
+                showBadCoinDialog(fullPenalty)
+            } else {
+                applyPenalty(fullPenalty)
+                Toast.makeText(this, "Cursed Coin! -$fullPenalty", Toast.LENGTH_SHORT).show()
+            }
         }
 
         btnUpgrade.setOnClickListener {
             if (coins >= upgradeCost) {
                 coins -= upgradeCost
                 upgradeCost = (upgradeCost * 1.5).toLong() 
-                baseTapValue += 2 
+                baseTapValue += 3 // Changed to +3 for faster scaling
 
                 if (currentItemIndex < items.size - 1) {
                     currentItemIndex++
@@ -144,7 +154,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // CRASH FIX: Stop all handlers before destroying the activity
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
@@ -270,7 +279,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetGame() {
-        coins = 0L; currentItemIndex = 0; upgradeCost = 10L; baseTapValue = 1L
+        coins = 0L; currentItemIndex = 0; upgradeCost = 30L; baseTapValue = 1L
         isAdBoostActive = false; secondsElapsed = 0; isGameRunning = false; hasWon = false
         tvTimer.text = "00:00"
         itemImage.setImageResource(items[0])
