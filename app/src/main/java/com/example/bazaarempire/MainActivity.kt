@@ -240,8 +240,10 @@ class MainActivity : AppCompatActivity() {
     private fun finishSafely() {
         handler.removeCallbacksAndMessages(null)
         bgmPlayer?.pause()
-        saveGameData()
-        finish()
+        // Delay the finish by 100ms to allow any UI (like the win dialog) to safely close
+        handler.postDelayed({
+            finish()
+        }, 100)
     }
 
     private fun pauseTimer() { handler.removeCallbacks(timerRunnable) }
@@ -411,7 +413,7 @@ class MainActivity : AppCompatActivity() {
         }
         btnNeg.setOnClickListener { 
             dialog.dismiss()
-            finishSafely() // Use the new safe exit function
+            finishSafely() // Uses the delayed finish to prevent the crash
         }
 
         dialog.show()

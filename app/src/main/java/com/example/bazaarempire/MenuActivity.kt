@@ -34,7 +34,7 @@ class MenuActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.btnPlay).setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            // REMOVED finish() HERE! The menu stays in the background.
         }
 
         findViewById<ImageButton>(R.id.btnTutorial).setOnClickListener {
@@ -92,9 +92,9 @@ class MenuActivity : AppCompatActivity() {
             if (bgmPlayer == null) {
                 bgmPlayer = MediaPlayer.create(this, R.raw.bgm)
                 bgmPlayer?.isLooping = true
-                val volume = prefs.getInt("volume", 50) / 100f
-                bgmPlayer?.setVolume(volume, volume)
             }
+            val volume = prefs.getInt("volume", 50) / 100f
+            bgmPlayer?.setVolume(volume, volume)
             if (bgmPlayer?.isPlaying == false) bgmPlayer?.start()
         }
     }
@@ -115,16 +115,27 @@ class MenuActivity : AppCompatActivity() {
         cbSound.isChecked = prefs.getBoolean("sound_enabled", true)
         seekBar.progress = prefs.getInt("volume", 50)
 
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val vol = progress / 100f
+                bgmPlayer?.setVolume(vol, vol)
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        cbMusic.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (bgmPlayer == null) startMenuMusic() else bgmPlayer?.start()
+            } else {
+                bgmPlayer?.pause()
+            }
+        }
+
         btnSave.setOnClickListener {
             prefs.edit().putBoolean("music_enabled", cbMusic.isChecked).apply()
             prefs.edit().putBoolean("sound_enabled", cbSound.isChecked).apply()
             prefs.edit().putInt("volume", seekBar.progress).apply()
-            
-            // Apply volume instantly to menu music
-            val vol = seekBar.progress / 100f
-            bgmPlayer?.setVolume(vol, vol)
-
-            if (cbMusic.isChecked) startMenuMusic() else bgmPlayer?.pause()
             dialog.dismiss()
         }
         dialog.show()
