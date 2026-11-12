@@ -1,6 +1,5 @@
 package com.example.bazaarempire
 
-import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
@@ -19,54 +18,35 @@ data class LeaderboardEntry(
 )
 
 object SupabaseManager {
-    // ==========================================
-    // PASTE YOUR SUPABASE URL AND KEY HERE:
-    // ==========================================
-    private const val SUPABASE_URL = "https://thowyglvcnplnothnrte.supabase.co/rest/v1/"
-    private const val SUPABASE_KEY = "sb_publishable_4lCy9HUyRfMH1DmLhGxOrQ_zaP_IEKj"
+    private const val SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co"
+    private const val SUPABASE_KEY = "YOUR_PUBLISHABLE_ANON_KEY"
 
-    val client: SupabaseClient = createSupabaseClient(
-        supabaseUrl = SUPABASE_URL,
-        supabaseKey = SUPABASE_KEY
-    ) {
-        install(Auth) {
-            autoLoadFromStorage = true
-            alwaysAutoRefresh = true
+    // Initialize safely
+    var client: SupabaseClient? = null
+    init {
+        try {
+            client = createSupabaseClient(supabaseUrl = SUPABASE_URL, supabaseKey = SUPABASE_KEY) {
+                install(Auth) { autoLoadFromStorage = true; alwaysAutoRefresh = true }
+                install(Postgrest)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        install(Postgrest)
     }
 
     suspend fun ensureAnonymousLogin() {
-        if (client.auth.currentUserOrNull() == null) {
-            try {
-                client.auth.signInAnonymously()
-                Log.d("SupabaseDebug", "Anonymous login SUCCESS")
-            } catch (e: Exception) {
-                Log.e("SupabaseDebug", "Anonymous login FAILED: ${e.message}")
+        try {
+            if (client?.auth?.currentUserOrNull() == null) {
+                client?.auth?.signInAnonymously()
             }
-        }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     suspend fun submitScore(playerId: String, playerName: String, contactInfo: String, timeInSeconds: Int) {
-        val currentUser = client.auth.currentUserOrNull()
-        if (currentUser == null) {
-            Log.e("SupabaseDebug", "Submit FAILED: User is null.")
-            return
-        }
-        
-        val entry = LeaderboardEntry(
-            player_id = playerId,
-            player_name = playerName,
-            contact_info = contactInfo,
-            score = timeInSeconds,
-            user_id = currentUser.id
-        )
-        
         try {
-            client.postgrest["leaderboard"].insert(entry)
-            Log.d("SupabaseDebug", "Score SUBMITTED: $timeInSeconds")
-        } catch (e: Exception) {
-            Log.e("SupabaseDebug", "Submit FAILED: ${e.message}")
-        }
+            val currentUser = client?.auth?.currentUserOrNull() ?: return
+            val entry = LeaderboardEntry(playerId, playerName, contactInfo, timeInSeconds, currentUser.id)
+            client?.postgrest?.get("leaderboard")?.insert(entry)
+        } catch (e: Exception) { e.printStackTrace() }
     }
 }

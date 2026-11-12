@@ -16,58 +16,36 @@ class BillingManager(private val context: Context) {
     private var connection: Connection? = null
 
     fun connect(onReady: () -> Unit) {
-        val rsaPublicKey = "YOUR_RSA_PUBLIC_KEY_HERE"
-        
-        val config = PaymentConfiguration(
-            localSecurityCheck = SecurityCheck.Enable(rsaPublicKey = rsaPublicKey)
-        )
-        payment = Payment(context, config)
-        
-        connection = payment?.connect {
-            connectionSucceed {
-                onReady()
+        try {
+            val config = PaymentConfiguration(localSecurityCheck = SecurityCheck.Disable)
+            payment = Payment(context, config)
+            connection = payment?.connect {
+                connectionSucceed { onReady() }
+                connectionFailed { throwable -> Log.e("Bazaar", "Connection failed: ${throwable.message}") }
+                disconnected { }
             }
-            connectionFailed { throwable ->
-                Log.e("BazaarBilling", "Connection failed: ${throwable.message}")
-            }
-            disconnected { }
+        } catch (e: Exception) {
+            Log.e("Bazaar", "Bazaar app not installed or error: ${e.message}")
         }
     }
 
-    fun purchaseItem(
-        activity: Activity,
-        productId: String,
-        onSuccess: () -> Unit,
-        onFailure: (String) -> Unit
-    ) {
-        if (connection?.getState() != ConnectionState.Connected) {
-            onFailure("Not connected to Cafe Bazaar")
-            return
-        }
-        
-        val request = PurchaseRequest(productId = productId, payload = "avatar_purchase")
-        
-        payment?.purchaseProduct(
-            registry = (activity as ComponentActivity).activityResultRegistry,
-            request = request
-        ) {
-            purchaseFlowBegan { }
-            failedToBeginFlow { throwable: Throwable -> 
-                onFailure(throwable.message ?: "Failed to begin flow") 
+    fun purchaseItem(activity: Activity, productId: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+        try {
+            if (connection?.getState() != ConnectionState.Connected) {
+                onFailure("Not connected to Cafe Bazaar")
+                return
             }
-            purchaseSucceed { _ -> 
-                onSuccess() 
+            val request = PurchaseRequest(productId = productId, payload = "avatar_purchase")
+            payment?.purchaseProduct(registry = (activity as ComponentActivity).activityResultRegistry, request = request) {
+                purchaseFlowBegan { }
+                failedToBeginFlow { throwable: Throwable -> onFailure(throwable.message ?: "Failed") }
+                purchaseSucceed { _ -> onSuccess() }
+                purchaseCanceled { onFailure("Canceled") }
+                purchaseFailed { throwable: Throwable -> onFailure(throwable.message ?: "Failed") }
             }
-            purchaseCanceled { 
-                onFailure("Purchase canceled by user") 
-            }
-            purchaseFailed { throwable: Throwable -> 
-                onFailure(throwable.message ?: "Purchase failed") 
-            }
+        } catch (e: Exception) {
+            onFailure(e.message ?: "Unknown Error")
         }
     }
-
-    fun disconnect() {
-        connection?.disconnect()
-    }
+    fun disconnect() { try { connection?.disconnect() } catch (e: Exception) {} }
 }
