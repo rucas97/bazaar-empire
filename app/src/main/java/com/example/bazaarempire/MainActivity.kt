@@ -94,10 +94,12 @@ class MainActivity : AppCompatActivity() {
         btnGoldenDeal = findViewById(R.id.btnGoldenDeal)
         btnBadCoin = findViewById(R.id.btnBadCoin)
 
-        initAudio()
+        // Load Avatar for in-game display
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val activeAvatar = prefs.getInt("active_avatar", R.drawable.avatar_default)
         findViewById<ImageView>(R.id.imgPlayerAvatar).setImageResource(activeAvatar)
+
+        initAudio()
         loadGameData()
         updateUI()
 
@@ -180,15 +182,9 @@ class MainActivity : AppCompatActivity() {
                 }, 30000) 
             }
         }
-
-            finishSafely()
-        }
     }
 
     private fun initAudio() {
-        val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
-        val activeAvatar = prefs.getInt("active_avatar", R.drawable.avatar_default)
-        findViewById<ImageView>(R.id.imgPlayerAvatar).setImageResource(activeAvatar)
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         isSoundEnabled = prefs.getBoolean("sound_enabled", true)
         volumeFloat = prefs.getInt("volume", 50) / 100f
@@ -243,10 +239,7 @@ class MainActivity : AppCompatActivity() {
     private fun finishSafely() {
         handler.removeCallbacksAndMessages(null)
         bgmPlayer?.pause()
-        // Delay the finish by 100ms to allow any UI (like the win dialog) to safely close
-        handler.postDelayed({
-            finish()
-        }, 100)
+        handler.postDelayed({ finish() }, 100)
     }
 
     private fun pauseTimer() { handler.removeCallbacks(timerRunnable) }
@@ -416,7 +409,7 @@ class MainActivity : AppCompatActivity() {
         }
         btnNeg.setOnClickListener { 
             dialog.dismiss()
-            finishSafely() // Uses the delayed finish to prevent the crash
+            finishSafely() 
         }
 
         dialog.show()
