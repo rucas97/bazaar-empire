@@ -10,12 +10,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LeaderboardEntry(
+    val player_id: String,       // NEW
     val player_name: String,
+    val contact_info: String,    // NEW
     val score: Int,
     val user_id: String
 )
 
 object SupabaseManager {
+    // REPLACE THESE WITH YOUR ACTUAL KEYS FROM SUPABASE DASHBOARD
     private const val SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co"
     private const val SUPABASE_KEY = "YOUR_PUBLISHABLE_ANON_KEY"
 
@@ -25,7 +28,7 @@ object SupabaseManager {
     ) {
         install(Auth) {
             autoLoadFromStorage = true
-            alwaysAutoRefresh = true // Fixed property name
+            alwaysAutoRefresh = true
         }
         install(Postgrest)
     }
@@ -40,10 +43,12 @@ object SupabaseManager {
         }
     }
 
-    suspend fun submitScore(playerName: String, timeInSeconds: Int) {
+    suspend fun submitScore(playerId: String, playerName: String, contactInfo: String, timeInSeconds: Int) {
         val currentUser = client.auth.currentUserOrNull() ?: return
         val entry = LeaderboardEntry(
+            player_id = playerId,
             player_name = playerName,
+            contact_info = contactInfo,
             score = timeInSeconds,
             user_id = currentUser.id
         )

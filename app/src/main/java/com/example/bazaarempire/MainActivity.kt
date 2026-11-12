@@ -425,7 +425,12 @@ class MainActivity : AppCompatActivity() {
         // Submit score to Supabase
         val playerName = getSharedPreferences("BazaarPrefs", MODE_PRIVATE).getString("user_name", "بازاری") ?: "بازاری"
         CoroutineScope(Dispatchers.IO).launch {
-            SupabaseManager.submitScore(playerName, secondsElapsed)
+            SupabaseManager.submitScore(
+                prefs.getString("unique_id", "BX-0000") ?: "BX-0000",
+                playerName,
+                prefs.getString("contact_info", "NONE") ?: "NONE",
+                secondsElapsed
+            )
         }
 
         val dialog = Dialog(this)

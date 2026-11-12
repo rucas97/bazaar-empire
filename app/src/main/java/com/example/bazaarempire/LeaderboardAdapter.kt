@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.Locale
 
 class LeaderboardAdapter(
-    private val players: List<Pair<String, Int>>,
+    private val players: List<Triple<String, String, Int>>, // ID, Name, Score
     private val currentPlayerName: String
 ) : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>() {
 
@@ -21,21 +21,20 @@ class LeaderboardAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_leaderboard, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_leaderboard, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val player = players[position]
-        val rank = position + 1
+        holder.tvRank.text = (position + 1).toString()
         
-        holder.tvRank.text = rank.toString()
-        holder.tvName.text = player.first
+        // Show ID under Name
+        holder.tvName.text = "${player.second}\n(${player.first})" 
 
-        val timeStr = if (player.second == 9999) "--:--" else String.format(Locale.US, "%02d:%02d", player.second / 60, player.second % 60)
+        val timeStr = if (player.third == 9999) "--:--" else String.format(Locale.US, "%02d:%02d", player.third / 60, player.third % 60)
         holder.tvTime.text = timeStr
 
-        if (player.first == currentPlayerName) {
+        if (player.second == currentPlayerName) {
             holder.tvName.setTextColor(Color.parseColor("#F4C430"))
             holder.tvName.setTypeface(null, Typeface.BOLD)
             holder.itemView.setBackgroundColor(Color.parseColor("#33FFFFFF"))

@@ -72,6 +72,15 @@
                 android:shadowDx="2"
                 android:shadowDy="2" />
 
+            <TextView
+                android:id="@+id/tvPlayerId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BX-0000"
+                android:textColor="#A0A0A0"
+                android:textSize="12sp" />
+        </LinearLayout>
+
             <ImageView
                 android:id="@+id/btnEditName"
                 android:layout_width="24dp"
