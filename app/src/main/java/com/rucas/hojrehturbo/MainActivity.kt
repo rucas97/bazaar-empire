@@ -106,8 +106,8 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch { SupabaseManager.ensureAnonymousLogin() }
 
-        // Initialize Tapsell with Live Key
-        Tapsell.initialize(applicationContext, "rfbsrihggfsbthnhssjsdimdjnimjerfqsfctqggtbchljcffhbqbkrsrtiskgiimgjhjr")
+        // FIX: Use 'application' (Application instance) instead of applicationContext
+        Tapsell.initialize(application, "rfbsrihggfsbthnhssjsdimdjnimjerfqsfctqggtbchljcffhbqbkrsrtiskgiimgjhjr")
 
         initAudio()
         loadGameData()
@@ -200,14 +200,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Centralized Tapsell Ad Function
+    // Centralized Tapsell Ad Function with Correct API Signatures
     private fun showTapsellAd(onReward: () -> Unit, onFailure: () -> Unit) {
         val adZoneId = "6af5ba9326195e2ec6800032"
         Toast.makeText(this, "در حال آماده سازی تبلیغ...", Toast.LENGTH_SHORT).show()
 
         Tapsell.requestAd(this, adZoneId, TapsellAdRequestOptions(), object : TapsellAdRequestListener {
             override fun onAdAvailable(adId: String) {
-                Tapsell.showAd(MainActivity@this, adId, TapsellShowOptions(), object : ir.tapsell.sdk.TapsellAdShowListener {
+                // FIX: showAd requires ZoneId as the second argument
+                Tapsell.showAd(MainActivity@this, adZoneId, adId, TapsellShowOptions(), object : ir.tapsell.sdk.TapsellAdShowListener {
                     override fun onOpened() {}
                     override fun onClosed() {}
                     override fun onError(error: String) {}
@@ -351,7 +352,6 @@ class MainActivity : AppCompatActivity() {
 
         btnPos.setOnClickListener {
             dialog.dismiss()
-            // REAL TAPSELL AD FOR REDUCING PENALTY
             showTapsellAd(
                 onReward = {
                     applyPenalty((penalty * 0.5).toLong())
