@@ -25,14 +25,13 @@ object SupabaseManager {
         supabaseKey = SUPABASE_KEY
     ) {
         install(Auth) {
-            // This ensures the session is saved and refreshed automatically
             autoLoadFromStorage = true
             autoRefresh = true
         }
         install(Postgrest)
     }
 
-    // Call this once when the app starts
+    // Call this once when the app starts to ensure a persistent session exists
     suspend fun ensureAnonymousLogin() {
         if (client.auth.currentUserOrNull() == null) {
             try {
@@ -43,7 +42,7 @@ object SupabaseManager {
         }
     }
 
-    // Call this when the player finishes a game
+    // Call this when the player finishes a game to submit their score
     suspend fun submitScore(playerName: String, timeInSeconds: Int) {
         val currentUser = client.auth.currentUserOrNull() ?: return
         val entry = LeaderboardEntry(
