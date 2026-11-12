@@ -49,7 +49,7 @@ class MenuActivity : AppCompatActivity() {
         super.onResume()
         startMenuMusic()
         updateProfileUI()
-        updateBestTimeUI() // Updates best time when returning from game
+        updateBestTimeUI() 
     }
     
     override fun onPause() { 

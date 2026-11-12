@@ -16,49 +16,61 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- PROPER PROFILE HEADER with dark background -->
+    <!-- PROFILE HEADER (Top Left) -->
     <LinearLayout
         android:id="@+id/profileHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:background="#CC000000"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="8dp"
+        android:padding="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imgMenuAvatar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/btn_shop"
-            android:padding="8dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/avatar_default" />
+        <!-- Fixed Avatar Frame -->
+        <RelativeLayout
+            android:layout_width="64dp"
+            android:layout_height="64dp">
+            
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/btn_shop"
+                android:scaleType="fitCenter" />
+
+            <ImageView
+                android:id="@+id/imgMenuAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/avatar_default" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/tvPlayerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
             android:text="حاج بازاری"
             android:textColor="#F4C430"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:shadowColor="#000"
             android:shadowDx="2"
             android:shadowDy="2" />
     </LinearLayout>
 
+    <!-- Title pushed down to give header breathing room -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="120dp"
         android:text="حجره توربو"
         android:textColor="#F4C430"
         android:textSize="46sp"
@@ -71,11 +83,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Prize Banner -->
     <TextView
         android:id="@+id/tvPrizeBanner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/bg_banner"
         android:paddingHorizontal="24dp"
         android:paddingVertical="12dp"
@@ -90,11 +103,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Best Time -->
     <TextView
         android:id="@+id/tvBestTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/bg_best_time"
         android:paddingHorizontal="16dp"
         android:paddingVertical="6dp"
@@ -109,6 +123,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Play Button -->
     <ImageButton
         android:id="@+id/btnPlay"
         android:layout_width="160dp"
@@ -116,11 +131,13 @@
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/icon_play"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvBestTime"
+        app:layout_constraintBottom_toTopOf="@+id/bottomMenu"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
 
+    <!-- Bottom Menu -->
     <LinearLayout
         android:id="@+id/bottomMenu"
         android:layout_width="match_parent"

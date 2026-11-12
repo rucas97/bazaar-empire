@@ -17,11 +17,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- BIGGER Score Panel with stretched background -->
+    <!-- TALLER Score Panel -->
     <ImageView
         android:id="@+id/scorePanel"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:scaleType="fitXY" 
@@ -30,61 +30,81 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Text perfectly centered INSIDE the panel -->
+    <!-- Text perfectly centered INSIDE the panel with slight padding from top -->
     <TextView
         android:id="@+id/tvCoinCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="۰"
         android:textColor="#F5E6D3"
-        android:textSize="40sp"
+        android:textSize="42sp"
         android:textStyle="bold"
         android:shadowColor="#000"
         android:shadowDx="3"
         android:shadowDy="3"
         android:shadowRadius="3"
         android:gravity="center"
+        android:paddingTop="8dp"
         app:layout_constraintTop_toTopOf="@+id/scorePanel"
         app:layout_constraintBottom_toBottomOf="@+id/scorePanel"
         app:layout_constraintStart_toStartOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
-    <!-- Top Row: Ad (Left), Timer (Center), Avatar (Right) -->
+    <!-- Top Row with Horizontal Chain to prevent overlap -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topButtonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@+id/scorePanel">
 
-        <!-- Ad on the left now -->
+        <!-- Ad Button (Chain Left) - Narrower width -->
         <ImageButton
             android:id="@+id/btnAd"
-            android:layout_width="130dp"
-            android:layout_height="55dp"
+            android:layout_width="110dp"
+            android:layout_height="50dp"
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:src="@drawable/btn_ad"
+            app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tvTimer" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="تبلیغات"
             android:textColor="#F5E6D3"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold"
-            android:layout_marginStart="35dp" 
+            android:layout_marginStart="28dp" 
             app:layout_constraintTop_toTopOf="@+id/btnAd"
             app:layout_constraintBottom_toBottomOf="@+id/btnAd"
             app:layout_constraintStart_toStartOf="@+id/btnAd"
             app:layout_constraintEnd_toEndOf="@+id/btnAd" />
 
-        <!-- Avatar on the right now -->
+        <!-- Timer (Chain Center) -->
+        <TextView
+            android:id="@+id/tvTimer"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_timer"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:text="۰۰:۰۰"
+            android:textColor="#F4C430"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnAd"
+            app:layout_constraintEnd_toStartOf="@+id/imgPlayerAvatar" />
+
+        <!-- Avatar (Chain Right) -->
         <ImageView
             android:id="@+id/imgPlayerAvatar"
             android:layout_width="65dp"
@@ -96,23 +116,7 @@
             android:src="@drawable/avatar_default"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- Timer exactly in the middle, with a fixed max width to prevent overlap -->
-        <TextView
-            android:id="@+id/tvTimer"
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_timer"
-            android:gravity="center"
-            android:paddingVertical="8dp"
-            android:text="۰۰:۰۰"
-            android:textColor="#F4C430"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvTimer"
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
