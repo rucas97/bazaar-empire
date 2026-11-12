@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import ir.tapsell.sdk.Tapsell
 import ir.tapsell.sdk.TapsellAdRequestListener
 import ir.tapsell.sdk.TapsellAdRequestOptions
+import ir.tapsell.sdk.TapsellAdShowListener
 import ir.tapsell.sdk.TapsellShowOptions
 import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
@@ -106,7 +107,6 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch { SupabaseManager.ensureAnonymousLogin() }
 
-        // Tapsell initialize must receive an Application instance, not just a Context
         Tapsell.initialize(application, "rfbsrihggfsbthnhssjsdimdjnimjerfqsfctqggtbchljcffhbqbkrsrtiskgiimgjhjr")
 
         initAudio()
@@ -199,21 +199,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // CORRECTED TAPSELL AD FUNCTION FOR LEGACY SDK
     private fun showTapsellAd(onReward: () -> Unit, onFailure: () -> Unit) {
         val adZoneId = "6af5ba9326195e2ec6800032"
         Toast.makeText(this, "در حال آماده سازی تبلیغ...", Toast.LENGTH_SHORT).show()
 
         Tapsell.requestAd(this, adZoneId, TapsellAdRequestOptions(), object : TapsellAdRequestListener {
             override fun onAdAvailable(adId: String) {
-                // Explicitly instantiate TapsellShowOptions()
-                Tapsell.showAd(MainActivity@this, adZoneId, adId, TapsellShowOptions(), object : ir.tapsell.sdk.TapsellAdShowListener {
+                // FIX: Instantiate showOptions into a variable first
+                val showOptions = TapsellShowOptions()
+                
+                // FIX: Use this@MainActivity instead of MainActivity@this
+                Tapsell.showAd(this@MainActivity, adZoneId, adId, showOptions, object : TapsellAdShowListener {
                     override fun onOpened() {}
                     override fun onClosed() {}
-                    override fun onError(error: String) {}
-                    override fun onRewarded(reward: Boolean) {
+                    override fun onError(message: String?) {}
+                    override fun onRewarded(completed: Boolean) {
                         runOnUiThread {
-                            if (reward) {
+                            if (completed) {
                                 onReward()
                             } else {
                                 onFailure()
@@ -223,7 +225,7 @@ class MainActivity : AppCompatActivity() {
                 })
             }
 
-            override fun onError(error: String) {
+            override fun onError(message: String?) {
                 runOnUiThread {
                     Toast.makeText(this@MainActivity, "تبلیغی موجود نیست. لطفا بعدا تلاش کنید.", Toast.LENGTH_SHORT).show()
                     onFailure()
