@@ -17,11 +17,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- TOP LEFT: MASSIVE AVATAR (90x90) -->
+    <!-- TOP LEFT: AVATAR -->
     <FrameLayout
         android:id="@+id/avatarFrame"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/btn_shop"
@@ -32,21 +32,23 @@
             android:id="@+id/imgPlayerAvatar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="16dp"
+            android:layout_margin="14dp"
             android:scaleType="centerCrop"
             android:src="@drawable/avatar_default" />
     </FrameLayout>
 
-    <!-- TOP RIGHT: HUGE SCOREBOARD (280x90) -->
+    <!-- TOP RIGHT: SCOREBOARD (Stretched to fill remaining space) -->
     <ImageView
         android:id="@+id/scorePanel"
-        android:layout_width="280dp"
-        android:layout_height="90dp"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:scaleType="fitCenter" 
+        android:scaleType="fitXY" 
         android:src="@drawable/panel_score"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/avatarFrame"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- HUGE COIN TEXT -->
@@ -67,15 +69,15 @@
         app:layout_constraintStart_toStartOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
-    <!-- BOTTOM LEFT: BIGGER AD BUTTON (150x55) -->
+    <!-- BOTTOM LEFT: HUGE AD BUTTON -->
     <ImageButton
         android:id="@+id/btnAd"
-        android:layout_width="150dp"
-        android:layout_height="55dp"
+        android:layout_width="160dp"
+        android:layout_height="60dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
+        android:scaleType="fitXY"
         android:src="@drawable/btn_ad"
         app:layout_constraintTop_toBottomOf="@+id/avatarFrame"
         app:layout_constraintStart_toStartOf="parent" />
@@ -93,18 +95,18 @@
         app:layout_constraintStart_toStartOf="@+id/btnAd"
         app:layout_constraintEnd_toEndOf="@+id/btnAd" />
 
-    <!-- BOTTOM RIGHT: BIGGER TIMER (120x55) -->
+    <!-- BOTTOM RIGHT: HUGE TIMER -->
     <TextView
         android:id="@+id/tvTimer"
-        android:layout_width="120dp"
-        android:layout_height="55dp"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/bg_timer"
         android:gravity="center"
         android:text="۰۰:۰۰"
         android:textColor="#F4C430"
-        android:textSize="24sp"
+        android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -121,7 +123,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- SPARKLE ANIMATION (Added back) -->
     <ImageView
         android:id="@+id/ivSparkle"
         android:layout_width="150dp"
