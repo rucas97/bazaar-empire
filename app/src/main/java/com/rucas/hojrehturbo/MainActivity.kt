@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch { SupabaseManager.ensureAnonymousLogin() }
 
-        // FIX: Use 'application' (Application instance) instead of applicationContext
+        // Tapsell initialize must receive an Application instance, not just a Context
         Tapsell.initialize(application, "rfbsrihggfsbthnhssjsdimdjnimjerfqsfctqggtbchljcffhbqbkrsrtiskgiimgjhjr")
 
         initAudio()
@@ -181,7 +181,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // REAL TAPSELL AD LOGIC
         btnAd.setOnClickListener {
             if (!isAdBoostActive) {
                 showTapsellAd(
@@ -200,14 +199,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Centralized Tapsell Ad Function with Correct API Signatures
+    // CORRECTED TAPSELL AD FUNCTION FOR LEGACY SDK
     private fun showTapsellAd(onReward: () -> Unit, onFailure: () -> Unit) {
         val adZoneId = "6af5ba9326195e2ec6800032"
         Toast.makeText(this, "در حال آماده سازی تبلیغ...", Toast.LENGTH_SHORT).show()
 
         Tapsell.requestAd(this, adZoneId, TapsellAdRequestOptions(), object : TapsellAdRequestListener {
             override fun onAdAvailable(adId: String) {
-                // FIX: showAd requires ZoneId as the second argument
+                // Explicitly instantiate TapsellShowOptions()
                 Tapsell.showAd(MainActivity@this, adZoneId, adId, TapsellShowOptions(), object : ir.tapsell.sdk.TapsellAdShowListener {
                     override fun onOpened() {}
                     override fun onClosed() {}
