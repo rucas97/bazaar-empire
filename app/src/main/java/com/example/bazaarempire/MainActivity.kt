@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnGoldenDeal: ImageButton
     private lateinit var btnBadCoin: ImageButton
 
-    // AUDIO
     private var bgmPlayer: MediaPlayer? = null
     private var soundPool: SoundPool? = null
     private var sfxTapId = 0
@@ -94,7 +93,6 @@ class MainActivity : AppCompatActivity() {
         btnGoldenDeal = findViewById(R.id.btnGoldenDeal)
         btnBadCoin = findViewById(R.id.btnBadCoin)
 
-        // Load Avatar for in-game display
         val prefs = getSharedPreferences("BazaarPrefs", MODE_PRIVATE)
         val activeAvatar = prefs.getInt("active_avatar", R.drawable.avatar_default)
         findViewById<ImageView>(R.id.imgPlayerAvatar).setImageResource(activeAvatar)

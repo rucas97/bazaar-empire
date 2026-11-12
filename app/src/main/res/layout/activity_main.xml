@@ -17,13 +17,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ROW 1: Avatar & Scoreboard -->
+    <!-- ================= TOP ROW ================= -->
     
     <!-- Avatar (Top Left) -->
     <FrameLayout
         android:id="@+id/avatarFrame"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/btn_shop"
@@ -34,33 +34,31 @@
             android:id="@+id/imgPlayerAvatar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="14dp"
+            android:layout_margin="12dp"
             android:scaleType="centerCrop"
             android:src="@drawable/avatar_default" />
     </FrameLayout>
 
-    <!-- Scoreboard (Top Right, next to avatar) -->
+    <!-- Scoreboard (Top Right, Fixed Size, NO STRETCHING) -->
     <ImageView
         android:id="@+id/scorePanel"
-        android:layout_width="0dp"
-        android:layout_height="75dp"
-        android:layout_marginStart="12dp"
+        android:layout_width="260dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:scaleType="fitXY" 
+        android:scaleType="fitCenter" 
         android:src="@drawable/panel_score"
-        app:layout_constraintTop_toTopOf="@+id/avatarFrame"
-        app:layout_constraintBottom_toBottomOf="@+id/avatarFrame"
-        app:layout_constraintStart_toEndOf="@+id/avatarFrame"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Coin Count Text (Exactly inside Scoreboard) -->
+    <!-- Coin Count (Perfectly Centered Inside Scoreboard) -->
     <TextView
         android:id="@+id/tvCoinCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="۰"
         android:textColor="#F5E6D3"
-        android:textSize="32sp"
+        android:textSize="28sp"
         android:textStyle="bold"
         android:shadowColor="#000"
         android:shadowDx="2"
@@ -72,13 +70,13 @@
         app:layout_constraintStart_toStartOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
-    <!-- ROW 2: Ad Button & Timer -->
+    <!-- ================= BOTTOM ROW (Aligned under Top Row) ================= -->
 
-    <!-- Ad Button (Below Avatar) -->
+    <!-- Ad Button (Bottom Left, Aligned under Avatar) -->
     <ImageButton
         android:id="@+id/btnAd"
         android:layout_width="130dp"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:background="@android:color/transparent"
@@ -101,24 +99,23 @@
         app:layout_constraintStart_toStartOf="@+id/btnAd"
         app:layout_constraintEnd_toEndOf="@+id/btnAd" />
 
-    <!-- Timer (Below Scoreboard, Aligned Right) -->
+    <!-- Timer (Bottom Right, Aligned under Scoreboard) -->
     <TextView
         android:id="@+id/tvTimer"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/bg_timer"
         android:gravity="center"
-        android:paddingVertical="8dp"
         android:text="۰۰:۰۰"
         android:textColor="#F4C430"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/scorePanel"
-        app:layout_constraintBottom_toBottomOf="@+id/btnAd"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- GAME ELEMENTS -->
+    <!-- ================= GAME ELEMENTS ================= -->
 
     <ImageView
         android:id="@+id/itemImage"
