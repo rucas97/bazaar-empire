@@ -1,4 +1,4 @@
-package com.example.bazaarempire
+package com.rucas.hojrehturbo
 
 import android.content.Intent
 import android.os.Bundle

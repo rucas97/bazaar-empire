@@ -1,4 +1,4 @@
-package com.example.bazaarempire
+package com.rucas.hojrehturbo
 
 import android.app.Dialog
 import android.content.Context

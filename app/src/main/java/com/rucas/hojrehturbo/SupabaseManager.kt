@@ -1,4 +1,4 @@
-package com.example.bazaarempire
+package com.rucas.hojrehturbo
 
 import android.util.Log
 import io.github.jan.supabase.SupabaseClient

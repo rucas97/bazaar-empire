@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.bazaarempire'
+    namespace 'com.rucas.hojrehturbo'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.bazaarempire"
+        applicationId "com.rucas.hojrehturbo"
         minSdk 26
         targetSdk 34
         versionCode 1
