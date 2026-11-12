@@ -126,9 +126,20 @@ class MenuActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_shop)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialog.findViewById<Button>(R.id.btnBuy1).setOnClickListener { equipAvatar(R.drawable.avatar_1) }
-        dialog.findViewById<Button>(R.id.btnBuy2).setOnClickListener { equipAvatar(R.drawable.avatar_2) }
-        dialog.findViewById<Button>(R.id.btnBuy3).setOnClickListener { equipAvatar(R.drawable.avatar_3) }
+        // TEMPORARY: Clicking the price button equips it visually for now.
+        // Later, this will be replaced with the Cafe Bazaar Poolakey SDK.
+        dialog.findViewById<Button>(R.id.btnBuy1).setOnClickListener { 
+            equipAvatar(R.drawable.avatar_1) 
+            Toast.makeText(this, "بعدا به درگاه پرداخت بازار وصل می‌شود", Toast.LENGTH_SHORT).show()
+        }
+        dialog.findViewById<Button>(R.id.btnBuy2).setOnClickListener { 
+            equipAvatar(R.drawable.avatar_2) 
+            Toast.makeText(this, "بعدا به درگاه پرداخت بازار وصل می‌شود", Toast.LENGTH_SHORT).show()
+        }
+        dialog.findViewById<Button>(R.id.btnBuy3).setOnClickListener { 
+            equipAvatar(R.drawable.avatar_3) 
+            Toast.makeText(this, "بعدا به درگاه پرداخت بازار وصل می‌شود", Toast.LENGTH_SHORT).show()
+        }
         dialog.findViewById<Button>(R.id.btnCloseShop).setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
@@ -136,7 +147,6 @@ class MenuActivity : AppCompatActivity() {
     private fun equipAvatar(avatarResId: Int) {
         prefs.edit().putInt("active_avatar", avatarResId).apply()
         updateProfileUI()
-        Toast.makeText(this, "آواتار با موفقیت تغییر کرد!", Toast.LENGTH_SHORT).show()
     }
 
     private fun showSettingsDialog() {

@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="فروشگاه"
+            android:text="فروشگاه آواتار"
             android:textColor="#F4C430"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:scrollbars="none">
 
             <LinearLayout
@@ -42,14 +42,14 @@
                 <!-- Avatar 1 -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="12dp"
                     android:background="#1A4A4A"
                     android:padding="8dp">
                     <ImageView
                         android:id="@+id/imgAvatar1"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:src="@drawable/avatar_1"
                         android:scaleType="centerCrop"
                         app:layout_constraintTop_toTopOf="parent"
@@ -61,16 +61,18 @@
                         android:layout_marginStart="12dp"
                         android:text="تاجر جوان"
                         android:textColor="#F5E6D3"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgAvatar1" />
                     <Button
                         android:id="@+id/btnBuy1"
-                        android:layout_width="80dp"
-                        android:layout_height="40dp"
+                        android:layout_width="110dp"
+                        android:layout_height="45dp"
                         android:backgroundTint="#30B5A5"
-                        android:text="انتخاب"
+                        android:text="۱۰,۰۰۰ تومان"
+                        android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -80,14 +82,14 @@
                 <!-- Avatar 2 -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="12dp"
                     android:background="#1A4A4A"
                     android:padding="8dp">
                     <ImageView
                         android:id="@+id/imgAvatar2"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:src="@drawable/avatar_2"
                         android:scaleType="centerCrop"
                         app:layout_constraintTop_toTopOf="parent"
@@ -99,16 +101,18 @@
                         android:layout_marginStart="12dp"
                         android:text="استاد بازار"
                         android:textColor="#F5E6D3"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgAvatar2" />
                     <Button
                         android:id="@+id/btnBuy2"
-                        android:layout_width="80dp"
-                        android:layout_height="40dp"
+                        android:layout_width="110dp"
+                        android:layout_height="45dp"
                         android:backgroundTint="#30B5A5"
-                        android:text="انتخاب"
+                        android:text="۱۰,۰۰۰ تومان"
+                        android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -118,14 +122,14 @@
                 <!-- Avatar 3 -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="12dp"
                     android:background="#1A4A4A"
                     android:padding="8dp">
                     <ImageView
                         android:id="@+id/imgAvatar3"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:src="@drawable/avatar_3"
                         android:scaleType="centerCrop"
                         app:layout_constraintTop_toTopOf="parent"
@@ -137,16 +141,18 @@
                         android:layout_marginStart="12dp"
                         android:text="تاجر ثروتمند"
                         android:textColor="#F5E6D3"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgAvatar3" />
                     <Button
                         android:id="@+id/btnBuy3"
-                        android:layout_width="80dp"
-                        android:layout_height="40dp"
+                        android:layout_width="110dp"
+                        android:layout_height="45dp"
                         android:backgroundTint="#30B5A5"
-                        android:text="انتخاب"
+                        android:text="۱۰,۰۰۰ تومان"
+                        android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
