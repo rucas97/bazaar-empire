@@ -5,11 +5,16 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 class MenuActivity : AppCompatActivity() {
@@ -59,8 +64,7 @@ class MenuActivity : AppCompatActivity() {
 
     private fun generateUniqueIdIfNeeded() {
         if (!prefs.contains("unique_id")) {
-            val uniqueId = "BX-${Random.nextInt(1000, 9999)}"
-            prefs.edit().putString("unique_id", uniqueId).apply()
+            prefs.edit().putString("unique_id", "BX-${Random.nextInt(1000, 9999)}").apply()
         }
     }
 
@@ -118,40 +122,58 @@ class MenuActivity : AppCompatActivity() {
         tvPlayerId.text = prefs.getString("unique_id", "BX-0000") ?: "BX-0000"
         
         val editIcon = findViewById<ImageView>(R.id.btnEditName)
-        if (prefs.getBoolean("name_changed", false)) {
-            editIcon.alpha = 0.3f
-        }
+        if (prefs.getBoolean("name_changed", false)) editIcon.alpha = 0.3f
 
         imgMenuAvatar.setImageResource(prefs.getInt("active_avatar", R.drawable.avatar_default))
     }
 
     private fun showLeaderboardDialog() {
-        val bestTime = prefs.getInt("best_time", 9999)
         val playerName = "حاج " + (prefs.getString("user_name", "بازاری") ?: "بازاری")
-        val playerId = prefs.getString("unique_id", "BX-0000") ?: "BX-0000"
         
-        val players = mutableListOf<Triple<String, String, Int>>()
-        val mockNames = arrayOf("علی", "رضا", "سارا", "محمد", "حسین")
-        for (i in 1..100) {
-            players.add(Triple("BX-${Random.nextInt(1000, 9999)}", "${mockNames.random()} ${i}", Random.nextInt(20, 300)))
-        }
-        
-        // FIXED: Nullable safety applied here
-        players.add(Triple(playerId, playerName, (if (bestTime == 9999) 9999 else bestTime)))
-        
-        val sortedPlayers = players.sortedBy { it.third }
-
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_leaderboard)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
+        val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = LeaderboardAdapter(sortedPlayers, playerName)
+
+        // Show loading spinner
+        progressBar.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
 
         dialog.findViewById<Button>(R.id.btnCloseLeaderboard).setOnClickListener { dialog.dismiss() }
         dialog.show()
+
+        // Fetch from Supabase
+        CoroutineScope(Dispatchers.IO).launch {
+            val scores = SupabaseManager.fetchLeaderboard()
+            
+            withContext(Dispatchers.Main) {
+                progressBar.visibility = View.GONE
+                if (scores != null) {
+                    recyclerView.visibility = View.VISIBLE
+                    
+                    // Remove any duplicate entries from the same user (keep the best time)
+                    val distinctScores = scores.groupBy { it.user_id }.map { it.value.minByOrNull { entry -> entry.score }!! }
+                    
+                    val sortedPlayers = distinctScores.sortedBy { it.score }
+                    
+                    recyclerView.adapter = LeaderboardAdapter(sortedPlayers, playerName)
+                    
+                    // Scroll to user's position
+                    val userIndex = sortedPlayers.indexOfFirst { it.player_name == playerName }
+                    if (userIndex != -1) {
+                        recyclerView.scrollToPosition(userIndex)
+                    }
+                } else {
+                    // NO INTERNET OR CONNECTION FAILED
+                    Toast.makeText(this@MenuActivity, "لطفا به اینترنت متصل شوید", Toast.LENGTH_LONG).show()
+                    dialog.dismiss()
+                }
+            }
+        }
     }
 
     private fun showDynamicShopDialog() {
@@ -274,7 +296,7 @@ class MenuActivity : AppCompatActivity() {
         dialog.findViewById<TextView>(R.id.tvDialogTitle).text = "آموزش بازی"
         dialog.findViewById<TextView>(R.id.tvDialogMessage).text = "۱. روی دکمه بزرگ ضربه بزنید تا سکه جمع کنید.\n۲. اجناس را ارتقا دهید تا به زعفران برسید.\n۳. مراقب سکه‌های نفرین شده باشید!\n۴. سکه‌های طلایی را سریع بزنید تا جایزه بگیرید."
         
-        dialog.findViewById<Button>(R.id.btnDialogNegative).visibility = android.view.View.GONE
+        dialog.findViewById<Button>(R.id.btnDialogNegative).visibility = View.GONE
         dialog.findViewById<Button>(R.id.btnDialogPositive).apply { text = "متوجه شدم"; setOnClickListener { dialog.dismiss() } }
         dialog.show()
     }

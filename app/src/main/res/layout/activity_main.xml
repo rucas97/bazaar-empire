@@ -27,7 +27,6 @@
         android:background="@drawable/btn_shop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
         <ImageView
             android:id="@+id/imgPlayerAvatar"
             android:layout_width="match_parent"
@@ -37,7 +36,7 @@
             android:src="@drawable/avatar_default" />
     </FrameLayout>
 
-    <!-- TOP RIGHT: SCOREBOARD (Stretched to fill remaining space) -->
+    <!-- TOP RIGHT: SCOREBOARD -->
     <ImageView
         android:id="@+id/scorePanel"
         android:layout_width="0dp"
@@ -51,7 +50,6 @@
         app:layout_constraintStart_toEndOf="@+id/avatarFrame"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- HUGE COIN TEXT -->
     <TextView
         android:id="@+id/tvCoinCount"
         android:layout_width="wrap_content"
@@ -69,7 +67,7 @@
         app:layout_constraintStart_toStartOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="@+id/scorePanel" />
 
-    <!-- BOTTOM LEFT: HUGE AD BUTTON -->
+    <!-- BOTTOM LEFT: AD BUTTON -->
     <ImageButton
         android:id="@+id/btnAd"
         android:layout_width="160dp"
@@ -95,7 +93,7 @@
         app:layout_constraintStart_toStartOf="@+id/btnAd"
         app:layout_constraintEnd_toEndOf="@+id/btnAd" />
 
-    <!-- BOTTOM RIGHT: HUGE TIMER -->
+    <!-- BOTTOM RIGHT: TIMER -->
     <TextView
         android:id="@+id/tvTimer"
         android:layout_width="130dp"
@@ -111,7 +109,7 @@
         app:layout_constraintTop_toBottomOf="@+id/scorePanel"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- GAME ELEMENTS -->
+    <!-- CENTER ITEM -->
     <ImageView
         android:id="@+id/itemImage"
         android:layout_width="140dp"
@@ -119,7 +117,7 @@
         android:layout_marginBottom="16dp"
         android:adjustViewBounds="true"
         android:src="@drawable/item_tea"
-        app:layout_constraintBottom_toTopOf="@+id/btnTap"
+        app:layout_constraintBottom_toTopOf="@+id/bottomButtonsLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -134,46 +132,59 @@
         app:layout_constraintStart_toStartOf="@+id/itemImage"
         app:layout_constraintTop_toTopOf="@+id/itemImage" />
 
-    <ImageButton
-        android:id="@+id/btnTap"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:layout_marginBottom="24dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        android:src="@drawable/btn_tap"
-        app:layout_constraintBottom_toTopOf="@+id/btnUpgrade"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- BOTTOM BUTTONS (SIDE BY SIDE) -->
+    <LinearLayout
+        android:id="@+id/bottomButtonsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="32dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <ImageButton
-        android:id="@+id/btnUpgrade"
-        android:layout_width="320dp"
-        android:layout_height="85dp"
-        android:layout_marginBottom="24dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        android:src="@drawable/btn_upgrade"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- TAP BUTTON (LEFT) -->
+        <ImageButton
+            android:id="@+id/btnTap"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/btn_tap" />
 
-    <TextView
-        android:id="@+id/tvUpgradeCost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ارتقا: ۳۰"
-        android:textColor="#F5E6D3"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:shadowColor="#000"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        app:layout_constraintTop_toTopOf="@+id/btnUpgrade"
-        app:layout_constraintBottom_toTopOf="@+id/btnUpgrade"
-        app:layout_constraintStart_toStartOf="@+id/btnUpgrade"
-        app:layout_constraintEnd_toEndOf="@+id/btnUpgrade" />
+        <!-- UPGRADE BUTTON (RIGHT) -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp">
 
+            <ImageButton
+                android:id="@+id/btnUpgrade"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_upgrade" />
+
+            <TextView
+                android:id="@+id/tvUpgradeCost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="ارتقا: ۳۰"
+                android:textColor="#F5E6D3"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:shadowColor="#000"
+                android:shadowDx="1"
+                android:shadowDy="1" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- SPECIAL COINS -->
     <ImageButton
         android:id="@+id/btnGoldenDeal"
         android:layout_width="90dp"
@@ -195,4 +206,5 @@
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

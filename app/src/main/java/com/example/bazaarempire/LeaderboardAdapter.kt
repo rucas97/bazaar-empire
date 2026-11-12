@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.Locale
 
 class LeaderboardAdapter(
-    private val players: List<Triple<String, String, Int>>,
+    private val players: List<LeaderboardEntry>,
     private val currentPlayerName: String
 ) : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvRank: TextView = view.findViewById(R.id.tvRank)
         val tvName: TextView = view.findViewById(R.id.tvName)
+        val tvId: TextView = view.findViewById(R.id.tvId)
         val tvTime: TextView = view.findViewById(R.id.tvTime)
     }
 
@@ -27,17 +28,21 @@ class LeaderboardAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val player = players[position]
         holder.tvRank.text = (position + 1).toString()
-        holder.tvName.text = "${player.second}\n(${player.first})" 
+        
+        holder.tvName.text = player.player_name
+        holder.tvId.text = "(${player.player_id})"
 
-        val timeStr = if (player.third == 9999) "--:--" else String.format(Locale.US, "%02d:%02d", player.third / 60, player.third % 60)
+        val timeStr = if (player.score == 9999) "--:--" else String.format(Locale.US, "%02d:%02d", player.score / 60, player.score % 60)
         holder.tvTime.text = timeStr
 
-        if (player.second == currentPlayerName) {
+        if (player.player_name == currentPlayerName) {
             holder.tvName.setTextColor(Color.parseColor("#F4C430"))
+            holder.tvId.setTextColor(Color.parseColor("#F4C430"))
             holder.tvName.setTypeface(null, Typeface.BOLD)
             holder.itemView.setBackgroundColor(Color.parseColor("#33FFFFFF"))
         } else {
             holder.tvName.setTextColor(Color.parseColor("#F5E6D3"))
+            holder.tvId.setTextColor(Color.parseColor("#A0A0A0"))
             holder.tvName.setTypeface(null, Typeface.NORMAL)
             holder.itemView.setBackgroundColor(Color.parseColor("#1A4A4A"))
         }
