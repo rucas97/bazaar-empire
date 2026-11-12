@@ -15,6 +15,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
@@ -81,6 +84,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        
+        CoroutineScope(Dispatchers.IO).launch {
+            SupabaseManager.ensureAnonymousLogin()
+        }
 
         tvCoinCount = findViewById(R.id.tvCoinCount)
         tvUpgradeCost = findViewById(R.id.tvUpgradeCost)
@@ -414,6 +421,12 @@ class MainActivity : AppCompatActivity() {
 
         val recordText = if (isNewRecord) "\n\n🌟 رکورد جدید! 🌟" else ""
         val message = "زمان: ${tvTimer.text}\nرتبه: $rank$recordText"
+
+        // Submit score to Supabase
+        val playerName = getSharedPreferences("BazaarPrefs", MODE_PRIVATE).getString("user_name", "بازاری") ?: "بازاری"
+        CoroutineScope(Dispatchers.IO).launch {
+            SupabaseManager.submitScore(playerName, secondsElapsed)
+        }
 
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
