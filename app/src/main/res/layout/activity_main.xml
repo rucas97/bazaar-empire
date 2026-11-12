@@ -121,6 +121,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- SPARKLE ANIMATION (Added back) -->
+    <ImageView
+        android:id="@+id/ivSparkle"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/coin"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/itemImage"
+        app:layout_constraintEnd_toEndOf="@+id/itemImage"
+        app:layout_constraintStart_toStartOf="@+id/itemImage"
+        app:layout_constraintTop_toTopOf="@+id/itemImage" />
+
     <ImageButton
         android:id="@+id/btnTap"
         android:layout_width="180dp"
