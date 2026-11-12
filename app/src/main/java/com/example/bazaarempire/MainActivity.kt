@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
             val bonus = baseTapValue * 10
             coins += bonus
             updateUI()
-            Toast.makeText(this, "جایزه طلایی! +${toPersianDigits(bonus.toString())}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@MainActivity, "جایزه طلایی! +${toPersianDigits(bonus.toString())}", Toast.LENGTH_SHORT).show()
             btnGoldenDeal.visibility = View.GONE
             resumeTimerIfNeeded()
         }
@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                 showBadCoinDialog(fullPenalty)
             } else {
                 applyPenalty(fullPenalty)
-                Toast.makeText(this, "سکه نفرین شده! -${toPersianDigits(fullPenalty.toString())}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "سکه نفرین شده! -${toPersianDigits(fullPenalty.toString())}", Toast.LENGTH_SHORT).show()
                 resumeTimerIfNeeded()
             }
         }
@@ -174,14 +174,14 @@ class MainActivity : AppCompatActivity() {
                 }
                 updateUI()
             } else {
-                Toast.makeText(this, "سکه کافی ندارید!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "سکه کافی ندارید!", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnAd.setOnClickListener {
             if (!isAdBoostActive) {
                 isAdBoostActive = true
-                Toast.makeText(this, "تبلیغات تستی: درآمد ۲ برابر برای ۳۰ ثانیه!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "تبلیغات تستی: درآمد ۲ برابر برای ۳۰ ثانیه!", Toast.LENGTH_SHORT).show()
                 updateUI()
                 handler.postDelayed({
                     isAdBoostActive = false

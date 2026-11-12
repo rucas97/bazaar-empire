@@ -59,16 +59,15 @@ object SupabaseManager {
         }
     }
 
-    // NEW: Fetch real data from Supabase
+    // FIXED: Using the correct Kotlin DSL block for ordering
     suspend fun fetchLeaderboard(): List<LeaderboardEntry>? {
         return try {
-            client.postgrest["leaderboard"]
-                .select()
-                .order("score", Order.ASCENDING)
-                .decodeList<LeaderboardEntry>()
+            client.postgrest["leaderboard"].select {
+                order("score", Order.ASCENDING)
+            }.decodeList<LeaderboardEntry>()
         } catch (e: Exception) {
             e.printStackTrace()
-            null // Returns null if no internet or connection fails
+            null 
         }
     }
 }
