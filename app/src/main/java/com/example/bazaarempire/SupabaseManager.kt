@@ -1,5 +1,6 @@
 package com.example.bazaarempire
 
+import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
@@ -19,8 +20,9 @@ data class LeaderboardEntry(
 )
 
 object SupabaseManager {
-    private const val SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co"
-    private const val SUPABASE_KEY = "YOUR_PUBLISHABLE_ANON_KEY"
+    // YOUR REAL CREDENTIALS (URL stripped of /rest/v1/)
+    private const val SUPABASE_URL = "https://thowyglvcnplnothnrte.supabase.co"
+    private const val SUPABASE_KEY = "sb_publishable_4lCy9HUyRfMH1DmLhGxOrQ_zaP_IEKj"
 
     val client: SupabaseClient = createSupabaseClient(
         supabaseUrl = SUPABASE_URL,
@@ -38,7 +40,7 @@ object SupabaseManager {
             try {
                 client.auth.signInAnonymously()
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("SupabaseAuth", "Login failed: ${e.message}")
             }
         }
     }
@@ -55,18 +57,17 @@ object SupabaseManager {
         try {
             client.postgrest["leaderboard"].insert(entry)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("SupabaseSubmit", "Failed to submit: ${e.message}")
         }
     }
 
-    // FIXED: Using the correct Kotlin DSL block for ordering
     suspend fun fetchLeaderboard(): List<LeaderboardEntry>? {
         return try {
             client.postgrest["leaderboard"].select {
                 order("score", Order.ASCENDING)
             }.decodeList<LeaderboardEntry>()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("SupabaseFetch", "Failed to fetch: ${e.message}")
             null 
         }
     }

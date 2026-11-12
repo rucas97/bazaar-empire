@@ -1,8 +1,11 @@
 package com.example.bazaarempire
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -60,6 +63,14 @@ class MenuActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnLeaderboard).setOnClickListener { showLeaderboardDialog() }
         findViewById<ImageButton>(R.id.btnShop).setOnClickListener { showDynamicShopDialog() }
         findViewById<ImageButton>(R.id.btnSettings).setOnClickListener { showSettingsDialog() }
+    }
+
+    // --- NATIVE INTERNET CHECK ---
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     private fun generateUniqueIdIfNeeded() {
@@ -128,6 +139,11 @@ class MenuActivity : AppCompatActivity() {
     }
 
     private fun showLeaderboardDialog() {
+        if (!isNetworkAvailable()) {
+            Toast.makeText(this, "لطفا به اینترنت متصل شوید", Toast.LENGTH_LONG).show()
+            return
+        }
+
         val playerName = "حاج " + (prefs.getString("user_name", "بازاری") ?: "بازاری")
         
         val dialog = Dialog(this)
@@ -139,14 +155,12 @@ class MenuActivity : AppCompatActivity() {
         val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Show loading spinner
         progressBar.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
 
         dialog.findViewById<Button>(R.id.btnCloseLeaderboard).setOnClickListener { dialog.dismiss() }
         dialog.show()
 
-        // Fetch from Supabase
         CoroutineScope(Dispatchers.IO).launch {
             val scores = SupabaseManager.fetchLeaderboard()
             
@@ -155,21 +169,17 @@ class MenuActivity : AppCompatActivity() {
                 if (scores != null) {
                     recyclerView.visibility = View.VISIBLE
                     
-                    // Remove any duplicate entries from the same user (keep the best time)
                     val distinctScores = scores.groupBy { it.user_id }.map { it.value.minByOrNull { entry -> entry.score }!! }
-                    
                     val sortedPlayers = distinctScores.sortedBy { it.score }
                     
                     recyclerView.adapter = LeaderboardAdapter(sortedPlayers, playerName)
                     
-                    // Scroll to user's position
                     val userIndex = sortedPlayers.indexOfFirst { it.player_name == playerName }
                     if (userIndex != -1) {
                         recyclerView.scrollToPosition(userIndex)
                     }
                 } else {
-                    // NO INTERNET OR CONNECTION FAILED
-                    Toast.makeText(this@MenuActivity, "لطفا به اینترنت متصل شوید", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MenuActivity, "خطا در ارتباط با سرور. کلیدهای سوپابیس چک شوند.", Toast.LENGTH_LONG).show()
                     dialog.dismiss()
                 }
             }
