@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- PROFILE HEADER (Top Left) -->
+    <!-- Profile Header -->
     <LinearLayout
         android:id="@+id/profileHeader"
         android:layout_width="wrap_content"
@@ -30,25 +30,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Fixed Avatar Frame -->
-        <RelativeLayout
+        <!-- Fixed Avatar Frame (Forces image inside the border) -->
+        <FrameLayout
             android:layout_width="64dp"
-            android:layout_height="64dp">
+            android:layout_height="64dp"
+            android:background="@drawable/btn_shop">
             
             <ImageView
+                android:id="@+id/imgMenuAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/btn_shop"
-                android:scaleType="fitCenter" />
-
-            <ImageView
-                android:id="@+id/imgMenuAvatar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_centerInParent="true"
+                android:layout_margin="12dp" 
                 android:scaleType="centerCrop"
                 android:src="@drawable/avatar_default" />
-        </RelativeLayout>
+        </FrameLayout>
 
         <TextView
             android:id="@+id/tvPlayerName"
@@ -65,7 +60,6 @@
             android:shadowDy="2" />
     </LinearLayout>
 
-    <!-- Title pushed down to give header breathing room -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
@@ -83,7 +77,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Prize Banner -->
     <TextView
         android:id="@+id/tvPrizeBanner"
         android:layout_width="wrap_content"
@@ -103,7 +96,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Best Time -->
     <TextView
         android:id="@+id/tvBestTime"
         android:layout_width="wrap_content"
@@ -123,7 +115,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Play Button -->
     <ImageButton
         android:id="@+id/btnPlay"
         android:layout_width="160dp"
@@ -137,7 +128,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="0.5" />
 
-    <!-- Bottom Menu -->
     <LinearLayout
         android:id="@+id/bottomMenu"
         android:layout_width="match_parent"
