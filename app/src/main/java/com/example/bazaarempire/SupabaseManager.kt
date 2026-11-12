@@ -16,7 +16,6 @@ data class LeaderboardEntry(
 )
 
 object SupabaseManager {
-    // REPLACE WITH YOUR ACTUAL SUPABASE URL AND ANON KEY
     private const val SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co"
     private const val SUPABASE_KEY = "YOUR_PUBLISHABLE_ANON_KEY"
 
@@ -26,12 +25,11 @@ object SupabaseManager {
     ) {
         install(Auth) {
             autoLoadFromStorage = true
-            autoRefresh = true
+            alwaysAutoRefresh = true // Fixed property name
         }
         install(Postgrest)
     }
 
-    // Call this once when the app starts to ensure a persistent session exists
     suspend fun ensureAnonymousLogin() {
         if (client.auth.currentUserOrNull() == null) {
             try {
@@ -42,7 +40,6 @@ object SupabaseManager {
         }
     }
 
-    // Call this when the player finishes a game to submit their score
     suspend fun submitScore(playerName: String, timeInSeconds: Int) {
         val currentUser = client.auth.currentUserOrNull() ?: return
         val entry = LeaderboardEntry(

@@ -16,8 +16,7 @@ class BillingManager(private val context: Context) {
     private var connection: Connection? = null
 
     fun connect(onReady: () -> Unit) {
-        // REPLACE WITH YOUR ACTUAL RSA PUBLIC KEY FROM BAZAAR DEV PANEL
-        val rsaPublicKey = "YOUR_RSA_PUBLIC_KEY_HERE" 
+        val rsaPublicKey = "YOUR_RSA_PUBLIC_KEY_HERE"
         
         val config = PaymentConfiguration(
             localSecurityCheck = SecurityCheck.Enable(rsaPublicKey = rsaPublicKey)
@@ -26,15 +25,12 @@ class BillingManager(private val context: Context) {
         
         connection = payment?.connect {
             connectionSucceed {
-                Log.d("BazaarBilling", "Connected successfully")
                 onReady()
             }
             connectionFailed { throwable ->
                 Log.e("BazaarBilling", "Connection failed: ${throwable.message}")
             }
-            disconnected {
-                Log.d("BazaarBilling", "Disconnected")
-            }
+            disconnected { }
         }
     }
 
@@ -51,27 +47,22 @@ class BillingManager(private val context: Context) {
         
         val request = PurchaseRequest(productId = productId, payload = "avatar_purchase")
         
-        // Poolakey requires the ActivityResultRegistry to launch the Bazaar payment screen
-        // We cast the Activity to ComponentActivity to access this
         payment?.purchaseProduct(
             registry = (activity as ComponentActivity).activityResultRegistry,
             request = request
         ) {
-            purchaseFlowBegan {
-                Log.d("BazaarBilling", "Purchase flow began")
+            purchaseFlowBegan { }
+            failedToBeginFlow { throwable: Throwable -> 
+                onFailure(throwable.message ?: "Failed to begin flow") 
             }
-            failedToBeginFlow { throwable ->
-                onFailure(throwable.message ?: "Failed to begin flow")
+            purchaseSucceed { _ -> 
+                onSuccess() 
             }
-            purchaseSucceed { purchaseEntity ->
-                Log.d("BazaarBilling", "Purchase successful: ${purchaseEntity.productId}")
-                onSuccess()
+            purchaseCanceled { 
+                onFailure("Purchase canceled by user") 
             }
-            purchaseCanceled {
-                onFailure("Purchase canceled by user")
-            }
-            purchaseFailed { throwable ->
-                onFailure(throwable.message ?: "Purchase failed")
+            purchaseFailed { throwable: Throwable -> 
+                onFailure(throwable.message ?: "Purchase failed") 
             }
         }
     }

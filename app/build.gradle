@@ -38,11 +38,14 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
 
-    // Supabase BOM (v2.5.4 is compatible with Kotlin 1.9)
+    // Bazaar Poolakey
+    implementation "com.github.cafebazaar.Poolakey:poolakey:2.2.0"
+
+    // Supabase BOM
     implementation platform('io.github.jan-tennert.supabase:bom:2.5.4')
     implementation 'io.github.jan-tennert.supabase:postgrest-kt'
-    implementation 'io.github.jan-tennert.supabase:gotrue-kt' // 'gotrue-kt' is the correct module for this version
+    implementation 'io.github.jan-tennert.supabase:gotrue-kt'
 
-    // Ktor client for networking (must be version 2.x for Supabase 2.x)
+    // Ktor
     implementation 'io.ktor:ktor-client-android:2.3.12'
 }
